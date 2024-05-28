@@ -1,0 +1,26 @@
+[Info]
+name = "Wild Wolf"
+displayname = "Wild Wolf"
+versiondate = 11,22,2000
+mugenversion = 1.0
+author = "Ahuron" ;Edit by Vergil Kusanagi (Ariel Gonzalez Ordaz)
+editor = "AnimugenZ" ;VERSION KOF 2K2 UM
+Pal.Defaults = 1,2,3,4,5,6
+
+[Files]
+cmd     = WildWolf.cmd
+cns     = WildWolf.cns
+st      = WildWolf.cns
+stcommon = common1.cns 
+st1     = WildWolf-N.cns
+st2     = WildWolf-S.cns
+st3     = WildWolf-H.cns
+sprite  = WildWolf.sff
+anim    = WildWolf.air
+sound   = WildWolf.snd
+pal1    = WildWolf-1.act
+pal2    = WildWolf-2.act
+pal3    = WildWolf-3.act
+pal4    = WildWolf-4.act
+pal5    = WildWolf-5.act
+pal6    = WildWolf-6.act

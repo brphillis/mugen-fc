@@ -1,0 +1,155 @@
+;This is a Master Hand's Stage from Super Smash brothers.
+;This Stage is intended for personal use!
+;They are not to be sold under any circumstances. 
+;Please DO NOT upload these files on your site. This will keep creators making stuff and ;people enjoying it. Thanks!
+===============||Mugen History||==============
+;Released: March 26, 2005
+;Author: Ruben
+;E-mail: Trunks_1000000pw@MugenHistory.com
+;Http://www.MugenHistory.com
+===============||Mugen History||==============
+[Info]
+ ;Name of the stage.
+name = "Master Hand Stage"
+;Author= Ruben
+;Released Date: March 26, 2005
+;--------------------------------------------------------
+[Camera]
+startx = 0
+starty = 0
+boundleft = 10
+boundright = 10
+boundhigh = -150
+boundlow = 0
+verticalfollow = .4
+floortension = 30
+tension = 60
+
+
+;--------------------------------------------------------
+[PlayerInfo]
+;--- Player 1 ---
+p1startx = -70     
+p1starty = 0        
+p1startz = 0       
+p1facing = 1           
+
+;--- Player 2 ---
+p2startx = 70
+p2starty = 0
+p2startz = 0
+p2facing = -1
+
+;--- Common ---
+leftbound  = -1000 
+rightbound =  1000 
+topbound  =  0     
+botbound  =  0  
+
+;--------------------------------------------------------
+[Scaling]
+topz     = 0      
+botz     = 50     
+topscale = .4     
+botscale = 1.2   
+
+;--------------------------------------------------------
+[Bound]
+screenleft = 15   
+screenright = 15
+
+;--------------------------------------------------------
+[StageInfo]
+zoffset = 130
+autoturn = 1
+resetBG = 1
+
+;--------------------------------------------------------
+[Shadow]
+color = 32,32,32
+yscale = -.1
+reflect = 1
+
+;--------------------------------------------------------
+[Music]
+bgmusic = sound/masterhand.mp3
+bgvolume = 255
+;-------------------------------------
+[BGdef]
+spr = stages/Master Hand.sff
+debugbg = 0
+;----------
+[BG 0]
+type  = normal
+spriteno = 0, 0
+layerno = 0                
+start = 0, 0
+delta = 1,1
+trans = none
+mask  = 1
+tile  = 1, 1
+tilespacing = 0,0
+window = 0,0, 319, 239
+windowdelta = 0,0
+
+;----------
+[BG stars]
+type  = normal
+spriteno = 1,0
+start = 0, 0
+delta = 1,1
+tile= 1,1
+;----------
+;----------------
+[BG base]
+type  = normal
+spriteno = 2,0
+start = 0, 0
+delta = 1,1
+mask=1
+;---------------------------
+[BG stars 1]
+type  = anim
+actionno = 8
+start = 0, 0
+delta = 1,1
+mask=1
+id=8
+
+[BGCtrlDef 8] 
+CtrlID = 8
+
+[begin action 8]
+8,1,0,0,2
+8,0,0,0,2
+
+;----------------------
+[BG stars 1]
+type  = anim
+actionno = 9
+start = 0, 0
+delta = 1,1
+mask=1
+id=9
+
+[BGCtrlDef 9] 
+CtrlID = 9
+
+[begin action 9]
+9,1,0,0,2
+9,0,0,0,2
+;-------------------------
+[BG stars 1]
+type  = anim
+actionno = 11
+start = 0, 0
+delta = 1,1
+mask=1
+id=11
+
+[BGCtrlDef 11] 
+CtrlID = 11
+
+[begin action 11]
+11,1,0,0,2
+11,0,0,0,2
