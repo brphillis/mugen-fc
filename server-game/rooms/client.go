@@ -1,4 +1,4 @@
-package main
+package rooms
 
 import (
 	"encoding/json"
@@ -17,9 +17,51 @@ type client struct {
 	headers http.Header
 }
 
-type AuthResponse struct {
+type authResponse struct {
 	UserName string `json:"userName"`
 	Email    string `json:"email"`
+}
+
+func authenticateClient(headers http.Header) (string, error) {
+	// Returns username as truthy value if user is authenticated
+	authURL := os.Getenv("AUTH_URL")
+
+	if authURL == "" {
+		return "", fmt.Errorf("could not find authorization endpoint")
+	}
+
+	req, err := http.NewRequest("GET", authURL+"/auth", nil)
+	if err != nil {
+		return "", err
+	}
+
+	// Copy headers from the client to the new request
+	for key, values := range headers {
+		for _, value := range values {
+			req.Header.Add(key, value)
+		}
+	}
+
+	// Send the request using an HTTP client
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return "", err
+	}
+	defer resp.Body.Close()
+
+	// Check if authentication is successful
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("authentication failed with status: %d", resp.StatusCode)
+	}
+
+	var authResp authResponse
+	err = json.NewDecoder(resp.Body).Decode(&authResp)
+	if err != nil {
+		return "", fmt.Errorf("failed to decode response: %v", err)
+	}
+
+	return authResp.UserName, nil
 }
 
 func (c *client) read(r *room) {
@@ -205,45 +247,4 @@ func (c *client) write() {
 			return
 		}
 	}
-}
-
-func authenticateClient(headers http.Header) (string, error) {
-	authURL := os.Getenv("AUTH_URL")
-
-	if authURL == "" {
-		return "", fmt.Errorf("could not find authorization endpoint")
-	}
-
-	req, err := http.NewRequest("GET", authURL+"/auth", nil)
-	if err != nil {
-		return "", err
-	}
-
-	// Copy headers from the client to the new request
-	for key, values := range headers {
-		for _, value := range values {
-			req.Header.Add(key, value)
-		}
-	}
-
-	// Send the request using an HTTP client
-	client := &http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-
-	// Check if authentication is successful
-	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("authentication failed with status: %d", resp.StatusCode)
-	}
-
-	var authResp AuthResponse
-	err = json.NewDecoder(resp.Body).Decode(&authResp)
-	if err != nil {
-		return "", fmt.Errorf("failed to decode response: %v", err)
-	}
-
-	return authResp.UserName, nil
 }

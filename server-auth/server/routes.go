@@ -1,11 +1,9 @@
 package server
 
 import (
-	"encoding/json"
-	"log"
 	"net/http"
 
-	"server-auth/internal/auth"
+	"server-auth/auth"
 
 	"github.com/gorilla/mux"
 	"github.com/markbates/goth/gothic"
@@ -13,8 +11,6 @@ import (
 
 func (s *Server) RegisterRoutes() http.Handler {
 	r := mux.NewRouter()
-
-	r.HandleFunc("/health", s.healthHandler)
 
 	r.HandleFunc("/auth", auth.GetAuthenticatedUserSession)
 	r.HandleFunc("/auth/{provider}", auth.StartAuthFunction)
@@ -27,14 +23,4 @@ func (s *Server) RegisterRoutes() http.Handler {
 	}).Methods("GET")
 
 	return r
-}
-
-func (s *Server) healthHandler(w http.ResponseWriter, r *http.Request) {
-	jsonResp, err := json.Marshal(s.db.Health())
-
-	if err != nil {
-		log.Fatalf("error handling JSON marshal. Err: %v", err)
-	}
-
-	_, _ = w.Write(jsonResp)
 }

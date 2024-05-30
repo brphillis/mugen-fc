@@ -1,4 +1,4 @@
-package main
+package rooms
 
 import (
 	"encoding/json"
@@ -90,7 +90,7 @@ func newRoom(roomID string, rm *roomManager, roomCreateData RoomCreateData) *roo
 	r.PlayerTwoState.InGame = false
 
 	r.gameState.Round = 0
-	r.gameState.Time = 90
+	r.gameState.Time = 120
 
 	go r.startBroadcast()
 	go r.checkEmptyRoom()
@@ -224,7 +224,7 @@ func (r *room) initiateRound() {
 
 	r.gameState.Round = r.gameState.Round + 1
 	r.gameState.Initiated = true
-	r.gameState.Time = 9000
+	r.gameState.Time = 120
 	r.PlayerOneState.Life = 1000
 	r.PlayerTwoState.Life = 1000
 

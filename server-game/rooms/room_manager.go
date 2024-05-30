@@ -1,4 +1,4 @@
-package main
+package rooms
 
 import (
 	"encoding/json"
@@ -29,13 +29,13 @@ type RoomOverviewDetails struct {
 	Players []*string `json:"players"`
 }
 
-func newRoomManager() *roomManager {
+func NewRoomManager() *roomManager {
 	return &roomManager{
 		rooms: make(map[string]*room),
 	}
 }
 
-func (rm *roomManager) createRoom(w http.ResponseWriter, r *http.Request) {
+func (rm *roomManager) CreateRoom(w http.ResponseWriter, r *http.Request) {
 	var data RoomCreateData
 
 	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
@@ -70,7 +70,7 @@ func (rm *roomManager) getRoom(roomID string) (*room, bool) {
 	return r, exists
 }
 
-func (rm *roomManager) getRooms(w http.ResponseWriter, r *http.Request) {
+func (rm *roomManager) GetRooms(w http.ResponseWriter, r *http.Request) {
 	onlyAvailable := r.URL.Query().Get("onlyAvailable")
 
 	rm.lock.RLock()
@@ -105,7 +105,7 @@ func (rm *roomManager) getRooms(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (rm *roomManager) updatePlayerCharacter(w http.ResponseWriter, r *http.Request) {
+func (rm *roomManager) UpdatePlayerCharacter(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	roomID := vars["id"]
 	player := vars["player"]
@@ -140,7 +140,7 @@ func (rm *roomManager) updatePlayerCharacter(w http.ResponseWriter, r *http.Requ
 	w.WriteHeader(http.StatusOK)
 }
 
-func (rm *roomManager) joinRoom(w http.ResponseWriter, r *http.Request) {
+func (rm *roomManager) JoinRoom(w http.ResponseWriter, r *http.Request) {
 
 	authenticatedUser, err := authenticateClient(r.Header)
 	if err != nil {
@@ -212,7 +212,7 @@ func (rm *roomManager) joinRoom(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (rm *roomManager) getRoomDetails(w http.ResponseWriter, r *http.Request) {
+func (rm *roomManager) GetRoomDetails(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	roomId := vars["id"]
 
@@ -239,7 +239,7 @@ func (rm *roomManager) getRoomDetails(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (rm *roomManager) serveWs(w http.ResponseWriter, r *http.Request) {
+func (rm *roomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 	room, exists := rm.rooms[id]
 	if !exists {

@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"os"
-	"server-auth/internal/auth"
-	"server-auth/internal/server"
+	"server-auth/auth"
+	"server-auth/server"
 )
 
 func main() {

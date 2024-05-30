@@ -9,13 +9,10 @@ import (
 	"time"
 
 	_ "github.com/joho/godotenv/autoload"
-
-	"server-auth/internal/database"
 )
 
 type Server struct {
 	port int
-	db   database.Service
 }
 
 // NewServer creates a new instance of the HTTP server with configured routes and settings.
@@ -36,7 +33,6 @@ func NewServer() *http.Server {
 	// Initialize the server struct
 	newServer := &Server{
 		port: port,
-		db:   database.New(),
 	}
 
 	// Declare server configuration

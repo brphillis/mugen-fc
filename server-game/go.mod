@@ -1,4 +1,4 @@
-module mugen-online
+module gameserver
 
 go 1.22.0
 
