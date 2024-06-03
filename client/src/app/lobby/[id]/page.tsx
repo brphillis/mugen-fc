@@ -20,5 +20,19 @@ export default async function Page({ params }: Props) {
     throw new Error("Error Joining Room");
   }
 
-  return <Lobby user={user} room={room} />;
+  return (
+    <>
+      {process.env.NEXT_PUBLIC_GAME_SERVER_SOCKET_URL && (
+        <Lobby
+          gameSocketURL={process.env.NEXT_PUBLIC_GAME_SERVER_SOCKET_URL}
+          user={user}
+          room={room}
+        />
+      )}
+
+      {!process.env.NEXT_PUBLIC_GAME_SERVER_SOCKET_URL && (
+        <div>Invalid Game Socket</div>
+      )}
+    </>
+  );
 }

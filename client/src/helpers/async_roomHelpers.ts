@@ -1,15 +1,17 @@
 import { ReadonlyHeaders } from "next/dist/server/web/spec-extension/adapters/headers";
-import { roomServerBaseUrl } from "../../const";
 
 // GET - Single Detailed Room
 export const get_Room = async (
   id: string
 ): Promise<{ room?: Room; error?: string }> => {
   try {
-    const response = await fetch(`${roomServerBaseUrl}/room/${id}`, {
-      method: "GET",
-      cache: "no-store",
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_GAME_SERVER_URL}/room/${id}`,
+      {
+        method: "GET",
+        cache: "no-store",
+      }
+    );
 
     if (!response.ok) {
       return { error: `Error: ${response.statusText}` };
@@ -30,7 +32,7 @@ export const get_Rooms = async (
   error?: string;
 }> => {
   try {
-    let url = `${roomServerBaseUrl}/rooms`;
+    let url = `${process.env.NEXT_PUBLIC_GAME_SERVER_URL}/rooms`;
 
     if (onlyAvailable) {
       url += "?onlyAvailable=true";
@@ -66,10 +68,13 @@ export const post_CreateRoom = async (
       user,
     };
 
-    const response = await fetch(`${roomServerBaseUrl}/createRoom`, {
-      method: "POST",
-      body: JSON.stringify(data),
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_GAME_SERVER_URL}/createRoom`,
+      {
+        method: "POST",
+        body: JSON.stringify(data),
+      }
+    );
 
     if (!response.ok) {
       return { error: `Error: ${response.statusText}` };
@@ -93,13 +98,16 @@ export const post_JoinRoom = async (
       id,
     };
 
-    const response = await fetch(`${roomServerBaseUrl}/joinRoom`, {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers,
-      cache: "no-store",
-      credentials: "include",
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_GAME_SERVER_URL}/joinRoom`,
+      {
+        method: "POST",
+        body: JSON.stringify(data),
+        headers,
+        cache: "no-store",
+        credentials: "include",
+      }
+    );
 
     if (!response.ok) {
       return { error: `Error: ${response.statusText}` };

@@ -33,6 +33,7 @@ declare global {
     x?: number;
     y?: number;
     damage?: number;
+    inGame?: boolean;
   }
 
   interface GameFiles {

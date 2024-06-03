@@ -2854,8 +2854,6 @@ function i(r) {
         window.mugenSocket.onmessage = (event) => {
           const data = JSON.parse(event.data);
 
-          console.log("data", data);
-
           const handleSyncGameState = (currentData) => {
             if (window?.gameState?.initiated) {
               this.handleSyncOpponentPlayer(currentData);

@@ -7,17 +7,23 @@ import { WaitingText } from "./components/WaitingText";
 import { PlayerInformation } from "./components/PlayerInformation";
 import { TimerContainer } from "./components/TimerContainer";
 import { parseQueryString } from "@/helpers/queryHelpers";
-import { gameSocketBaseUrl } from "../../../const";
 import { returnPlayerNumber } from "@/helpers/gameHelpers";
 import { WinnerDisplay } from "./components/WinnerDisplay";
+import { GameStartDisplay } from "./components/GameStartDisplay";
 
 type Props = {
+  gameSocketURL: string;
   encodedGameFilesString: string;
   room: Room;
   user: User;
 };
 
-export const Game = ({ encodedGameFilesString, user, room }: Props) => {
+export const Game = ({
+  gameSocketURL,
+  encodedGameFilesString,
+  user,
+  room,
+}: Props) => {
   const [gameLoading, setGameLoading] = useState<boolean>(true);
   const [gameState, setGameState] = useState<GameState>();
   const [playerOneState, setPlayerOneState] = useState<PlayerState>();
@@ -32,7 +38,7 @@ export const Game = ({ encodedGameFilesString, user, room }: Props) => {
     window.currentPlayerNumber = returnPlayerNumber(user, room);
     window.gameFiles = JSON.parse(encodedGameFilesString);
 
-    const url = `${gameSocketBaseUrl}${fightId}`;
+    const url = `${gameSocketURL}${fightId}`;
     window.mugenSocketUrl = url;
   }, []);
 
@@ -67,11 +73,6 @@ export const Game = ({ encodedGameFilesString, user, room }: Props) => {
     setIsReady(currentPlayerState?.ready);
   }, [playerOneState?.ready, playerTwoState?.ready]);
 
-  // listen for round winner for displaying round winner
-  useEffect(() => {
-    console.log("winners", gameState?.winners);
-  }, [gameState?.winners]);
-
   return (
     <div className="w-full flex flex-col justify-center">
       <div className="relative" id="game">
@@ -103,6 +104,14 @@ export const Game = ({ encodedGameFilesString, user, room }: Props) => {
         )}
 
         {!isReady && !gameState?.initiated && <ReadyButton />}
+
+        {!gameLoading && (
+          <GameStartDisplay
+            gameState={gameState}
+            playerOneState={playerOneState}
+            playerTwoState={playerTwoState}
+          />
+        )}
 
         {!gameState?.initiated && <WinnerDisplay gameState={gameState} />}
 

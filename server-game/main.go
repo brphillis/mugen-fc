@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 
@@ -10,6 +11,8 @@ import (
 )
 
 func main() {
+	baseURL := returnBaseUrl()
+
 	err := godotenv.Load()
 	if err != nil {
 		log.Println("No .env file found, using system environment variables")
@@ -17,12 +20,24 @@ func main() {
 		log.Println(".env file loaded successfully")
 	}
 
-	// Get the port from environment variables, default to 8080 if not set
-	portStr := os.Getenv("PORT")
-	if portStr == "" {
-		portStr = "6000"
+	server := server.NewServer(baseURL)
+	server.Run()
+}
+
+func returnBaseUrl() string {
+	currentEnv := os.Getenv("APP_ENV")
+
+	host := os.Getenv("HOST")
+	if host == "" || currentEnv == "local" {
+		host = "localhost"
 	}
 
-	server := server.NewServer(portStr)
-	server.Run()
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8000"
+	}
+
+	baseURL := fmt.Sprintf("%s:%s", host, port)
+
+	return baseURL
 }

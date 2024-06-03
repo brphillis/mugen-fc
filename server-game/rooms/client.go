@@ -176,7 +176,6 @@ func (c *client) read(r *room) {
 			r.structLock.Lock()
 
 			if messageData.PlayerOneState.InGame && r.PlayerOneState.User == authenticatedUser {
-				fmt.Println("player one ingame")
 				r.PlayerOneState.InGame = messageData.PlayerOneState.InGame
 
 				for client := range r.clients {
@@ -185,7 +184,6 @@ func (c *client) read(r *room) {
 			}
 
 			if messageData.PlayerTwoState.InGame && r.PlayerTwoState.User == authenticatedUser {
-				fmt.Println("player two ingame")
 				r.PlayerTwoState.InGame = messageData.PlayerTwoState.InGame
 
 				for client := range r.clients {

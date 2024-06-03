@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"log"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -34,6 +35,18 @@ func (s *Server) Run() {
 		log.Println("Starting web server on", s.addr)
 		if err := s.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("ListenAndServe: %v", err)
+		}
+	}()
+
+	// Check if the server is up by attempting to connect to it
+	go func() {
+		for {
+			time.Sleep(1 * time.Second)
+			_, err := net.Dial("tcp", s.addr)
+			if err == nil {
+				log.Println("Server started successfully and is listening on", s.addr)
+				return
+			}
 		}
 	}()
 

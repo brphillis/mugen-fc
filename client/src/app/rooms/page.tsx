@@ -6,7 +6,9 @@ export default async function Page() {
   const { rooms } = await get_Rooms(true);
 
   return (
-    <AuthContextProvider>
+    <AuthContextProvider
+      authServerUrl={process.env.NEXT_PUBLIC_AUTH_SERVER_URL!}
+    >
       <RoomManager initialRooms={rooms} />
     </AuthContextProvider>
   );

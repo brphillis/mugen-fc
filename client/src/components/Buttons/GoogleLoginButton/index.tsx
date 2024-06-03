@@ -1,13 +1,15 @@
 "use client";
 
 import React from "react";
-import BasicButton from "../BasicButton";
-import { authServerBaseUrl } from "../../../../const";
 import { Icon } from "@/components/Icons/Icon";
 
-export const GoogleLoginButton = () => {
+type Props = {
+  authServerUrl: string;
+};
+
+export const GoogleLoginButton = ({ authServerUrl }: Props) => {
   const handleLogin = () => {
-    window.location.href = `${authServerBaseUrl}/auth/google`;
+    window.location.href = `${authServerUrl}/auth/google`;
   };
 
   return (

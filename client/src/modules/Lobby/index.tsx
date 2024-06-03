@@ -2,19 +2,18 @@
 
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
-import BasicButton from "@/components/Buttons/BasicButton";
-import { gameSocketBaseUrl } from "../../../const";
 import { returnPlayerNumber } from "@/helpers/gameHelpers";
 import SelectedCharacter from "./SelectedCharacter";
 import PlayerInfo from "./PlayerInfo";
 import { InfiniteScrollText } from "@/components/Effect/InfiniteScrollText";
 
 type Props = {
+  gameSocketURL: string;
   user: User;
   room: Room;
 };
 
-export const Lobby = ({ user, room }: Props) => {
+export const Lobby = ({ gameSocketURL, user, room }: Props) => {
   const [playerOneState, setPlayerOneState] = useState<PlayerState>();
   const [playerTwoState, setPlayerTwoState] = useState<PlayerState>();
   const [playersReady, setPlayersReady] = useState<boolean>(false);
@@ -71,7 +70,7 @@ export const Lobby = ({ user, room }: Props) => {
   };
 
   useEffect(() => {
-    const url = `${gameSocketBaseUrl}${params.id}`;
+    const url = `${gameSocketURL}${params.id}`;
 
     webSocket.current = new WebSocket(url);
 
@@ -187,7 +186,11 @@ export const Lobby = ({ user, room }: Props) => {
               )}
 
               {playerOneState?.ready && playerTwoState?.ready && (
-                <div className="select-none text-6xl font-press_start_2p">
+                <div
+                  className={`select-none font-press_start_2p ${
+                    countDown > 0 ? "text-6xl" : "text-lg mt-3"
+                  }`}
+                >
                   {countDown > 0 ? countDown : "Joining..."}
                 </div>
               )}

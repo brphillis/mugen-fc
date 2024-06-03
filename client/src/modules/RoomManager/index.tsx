@@ -4,11 +4,7 @@ import React, { useContext, useState } from "react";
 import { useRouter } from "next/navigation";
 import BasicButton from "@/components/Buttons/BasicButton";
 import BasicInput from "@/components/Forms/Input/BasicInput";
-import {
-  get_Rooms,
-  post_CreateRoom,
-  post_JoinRoom,
-} from "@/helpers/async_roomHelpers";
+import { get_Rooms, post_CreateRoom } from "@/helpers/async_roomHelpers";
 import { AuthContext } from "@/context/AuthContext";
 import { Icon } from "@/components/Icons/Icon";
 
@@ -67,24 +63,26 @@ export const RoomManager = ({ initialRooms }: Props) => {
 
         {/* Room List */}
         <div className="flex flex-col items-center gap-3 w-full">
-          {currentRooms?.map(
-            ({ id, name, players }: RoomOverview, index: number) => {
-              const playersInRoom = players.filter((p) => p != null).length;
-              const roomCapacity = players.length;
+          {currentRooms &&
+            currentRooms?.length > 0 &&
+            currentRooms.map(
+              ({ id, name, players }: RoomOverview, index: number) => {
+                const playersInRoom = players.filter((p) => p != null).length;
+                const roomCapacity = players.length;
 
-              return (
-                <div
-                  key={`room-${index}`}
-                  onClick={() => handleJoinRoom(id)}
-                  className="w-full rounded-md p-3 px-6 flex justify-between cursor-pointer bg-white/5"
-                >
-                  <div>{name}</div>
+                return (
+                  <div
+                    key={`room-${index}`}
+                    onClick={() => handleJoinRoom(id)}
+                    className="w-full rounded-md p-3 px-6 flex justify-between cursor-pointer bg-white/5"
+                  >
+                    <div>{name}</div>
 
-                  <div>{playersInRoom + "/" + roomCapacity}</div>
-                </div>
-              );
-            }
-          )}
+                    <div>{playersInRoom + "/" + roomCapacity}</div>
+                  </div>
+                );
+              }
+            )}
         </div>
 
         <div className="divider my-0 opacity-50"></div>

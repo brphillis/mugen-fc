@@ -3,7 +3,6 @@ import { get_Room } from "@/helpers/async_roomHelpers";
 import { Game } from "@/modules/Game";
 import { headers } from "next/headers";
 import Script from "next/script";
-import { bucketServerBaseUrl } from "../../../const";
 
 type Props = { searchParams: { id: string } };
 
@@ -25,8 +24,7 @@ export default async function Page({ searchParams }: Props) {
   const playerTwoName = room?.playerTwoState.name?.toLocaleLowerCase();
 
   const response = await fetch(
-    `${bucketServerBaseUrl}/api/characters?playerOne=${playerOneName}&playerTwo=${playerTwoName}`,
-    { cache: "no-store" }
+    `${process.env.BUCKET_SERVER_URL}/api/characters?playerOne=${playerOneName}&playerTwo=${playerTwoName}`
   );
 
   if (!response.ok) {
@@ -37,11 +35,17 @@ export default async function Page({ searchParams }: Props) {
 
   return (
     <div className="mt-12">
-      <Game
-        encodedGameFilesString={JSON.stringify(base64Data)}
-        user={user}
-        room={room}
-      />
+      {process.env.NEXT_PUBLIC_GAME_SERVER_SOCKET_URL && (
+        <Game
+          gameSocketURL={process.env.NEXT_PUBLIC_GAME_SERVER_SOCKET_URL}
+          encodedGameFilesString={JSON.stringify(base64Data)}
+          user={user}
+          room={room}
+        />
+      )}
+      {!process.env.NEXT_PUBLIC_GAME_SERVER_SOCKET_URL && (
+        <div>Invalid Game Socket</div>
+      )}
       <Script defer async strategy="beforeInteractive" src="/mugen.js" />
     </div>
   );

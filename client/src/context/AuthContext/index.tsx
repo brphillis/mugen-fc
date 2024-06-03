@@ -8,19 +8,24 @@ import React, {
   useState,
 } from "react";
 import { get_authenticatedUser } from "@/helpers/async_authHelpers";
-import { authServerBaseUrl } from "../../../const";
 
 type AuthContextType = {
   user: User;
+  authServerUrl: string;
 };
 
 export const AuthContext = createContext<AuthContextType>(
   {} as AuthContextType
 );
 
-export const AuthContextProvider: FC<{ children: ReactNode; user?: User }> = ({
+export const AuthContextProvider: FC<{
+  children: ReactNode;
+  authServerUrl: string;
+  user?: User;
+}> = ({
   children,
   user: serverProvidedUser,
+  authServerUrl: authServerBaseUrl,
 }) => {
   const [user, setUser] = useState<User | undefined>(serverProvidedUser);
 
@@ -31,6 +36,7 @@ export const AuthContextProvider: FC<{ children: ReactNode; user?: User }> = ({
       if (foundUser) {
         setUser(foundUser);
       } else {
+        console.log("not found");
         window.location.href = `${authServerBaseUrl}/auth/google`;
       }
     };
@@ -44,6 +50,7 @@ export const AuthContextProvider: FC<{ children: ReactNode; user?: User }> = ({
     <AuthContext.Provider
       value={{
         user: user as User,
+        authServerUrl: authServerBaseUrl as string,
       }}
     >
       {children}

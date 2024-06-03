@@ -14,7 +14,7 @@ func main() {
 	auth.NewAuth(baseURL)
 
 	// Initialize and start the server
-	srv := server.NewServer()
+	srv := server.NewServer(baseURL)
 	err := srv.ListenAndServe()
 	if err != nil {
 		panic(fmt.Sprintf("cannot start server: %s", err))
@@ -24,10 +24,6 @@ func main() {
 func returnBaseUrl() string {
 	// Load environment variables
 	currentEnv := os.Getenv("APP_ENV")
-	protocol := "https"
-	if currentEnv == "local" {
-		protocol = "http"
-	}
 
 	host := os.Getenv("HOST")
 	if host == "" || currentEnv == "local" {
@@ -39,7 +35,7 @@ func returnBaseUrl() string {
 		port = "5000"
 	}
 
-	baseURL := fmt.Sprintf("%s://%s:%s", protocol, host, port)
+	baseURL := fmt.Sprintf("%s:%s", host, port)
 
 	return baseURL
 }
