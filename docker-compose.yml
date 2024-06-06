@@ -1,0 +1,42 @@
+version: "3.8"
+services:
+  server-auth:
+    container_name: server-auth
+    build: ./server-auth
+    ports:
+      - "5000:5000"
+    environment:
+      - PORT=5000
+      - CLIENT_URL=${CLIENT_URL}
+      - AUTH_URL=${AUTH_URL}
+      - BUCKET_URL=${BUCKET_URL}
+      - GAMESERVER_URL=${GAMESERVER_URL}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+    restart: unless-stopped
+
+  server-bucket:
+    container_name: server-bucket
+    build: ./server-bucket
+    ports:
+      - "4000:4000"
+    environment:
+      - PORT=4000
+      - CLIENT_URL=${CLIENT_URL}
+      - AUTH_URL=${AUTH_URL}
+      - BUCKET_URL=${BUCKET_URL}
+      - GAMESERVER_URL=${GAMESERVER_URL}
+    restart: unless-stopped
+
+  server-game:
+    container_name: server-game
+    build: ./server-game
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - CLIENT_URL=${CLIENT_URL}
+      - AUTH_URL=${AUTH_URL}
+      - BUCKET_URL=${BUCKET_URL}
+      - GAMESERVER_URL=${GAMESERVER_URL}
+    restart: unless-stopped

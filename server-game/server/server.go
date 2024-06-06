@@ -44,7 +44,7 @@ func (s *Server) Run() {
 			time.Sleep(1 * time.Second)
 			_, err := net.Dial("tcp", s.addr)
 			if err == nil {
-				log.Println("Server started successfully and is listening on", s.addr)
+				log.Println("Running on:", s.addr)
 				return
 			}
 		}

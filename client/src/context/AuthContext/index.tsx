@@ -36,7 +36,6 @@ export const AuthContextProvider: FC<{
       if (foundUser) {
         setUser(foundUser);
       } else {
-        console.log("not found");
         window.location.href = `${authServerBaseUrl}/auth/google`;
       }
     };

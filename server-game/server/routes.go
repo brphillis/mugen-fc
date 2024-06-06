@@ -3,7 +3,7 @@ package server
 import (
 	"github.com/gorilla/mux"
 
-	"gameserver/rooms"
+	"server-game/rooms"
 )
 
 func RegisterRoutes() *mux.Router {

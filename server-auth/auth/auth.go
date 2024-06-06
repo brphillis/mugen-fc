@@ -6,7 +6,10 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
+	"regexp"
+	"strings"
 	"time"
 
 	"github.com/goombaio/namegenerator"
@@ -30,13 +33,21 @@ var Store *sessions.CookieStore
 func NewAuth(baseURL string) {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error Loading Env File")
+		log.Println("No .env file found, using system environment variables")
+	} else {
+		log.Println(".env file loaded successfully")
 	}
 
 	googleClientId := os.Getenv("GOOGLE_CLIENT_ID")
 	googleClientSecret := os.Getenv("GOOGLE_CLIENT_SECRET")
 
-	callbackURL := baseURL + "/auth/callback/google"
+	authURL := os.Getenv("AUTH_URL")
+
+	// returns localhost if not valid url, need this for local as cant use docker named network name for google auth whitelist
+
+	fmt.Println(returnLocalHostIfNotValidUrlOrIp(authURL) + "/auth/callback/google")
+
+	callbackURL := returnLocalHostIfNotValidUrlOrIp(authURL) + "/auth/callback/google"
 
 	Store = sessions.NewCookieStore([]byte(key))
 	Store.MaxAge(MaxAge)
@@ -122,4 +133,41 @@ func GetAuthenticatedUserSession(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(response)
+}
+
+func isDockerName(host string) bool {
+	// Check for ".com" domain
+	if strings.Contains(host, ".com") {
+		return false
+	}
+
+	// Regex to check for valid IP address
+	ipRegex := regexp.MustCompile(`^(\d{1,3}\.){3}\d{1,3}$`)
+	if ipRegex.MatchString(host) {
+		return false
+	}
+
+	return true
+}
+
+func returnLocalHostIfNotValidUrlOrIp(inputURL string) string {
+	parsedURL, err := url.Parse(inputURL)
+	if err != nil {
+		fmt.Println("Error parsing URL:", err)
+		return ""
+	}
+
+	// Check if the hostname (excluding port) is a Docker service name
+	hostname := strings.Split(parsedURL.Host, ":")[0]
+	if isDockerName(hostname) {
+		// Modify the hostname to localhost, but keep the port if specified
+		port := strings.Split(parsedURL.Host, ":")[1]
+		if port != "" {
+			parsedURL.Host = "localhost:" + port
+		} else {
+			parsedURL.Host = "localhost"
+		}
+	}
+
+	return parsedURL.String()
 }

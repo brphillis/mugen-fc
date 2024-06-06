@@ -5,20 +5,20 @@ import (
 	"log"
 	"os"
 
-	"gameserver/server"
+	"server-game/server"
 
 	"github.com/joho/godotenv"
 )
 
 func main() {
-	baseURL := returnBaseUrl()
-
 	err := godotenv.Load()
 	if err != nil {
 		log.Println("No .env file found, using system environment variables")
 	} else {
 		log.Println(".env file loaded successfully")
 	}
+
+	baseURL := returnBaseUrl()
 
 	server := server.NewServer(baseURL)
 	server.Run()
@@ -29,7 +29,7 @@ func returnBaseUrl() string {
 
 	host := os.Getenv("HOST")
 	if host == "" || currentEnv == "local" {
-		host = "localhost"
+		host = "0.0.0.0"
 	}
 
 	port := os.Getenv("PORT")

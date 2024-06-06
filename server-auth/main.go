@@ -2,12 +2,22 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"server-auth/auth"
 	"server-auth/server"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	err := godotenv.Load()
+	if err != nil {
+		log.Println("No .env file found, using system environment variables")
+	} else {
+		log.Println(".env file loaded successfully")
+	}
+
 	baseURL := returnBaseUrl()
 
 	// Initialize authentication with the domain
@@ -15,9 +25,10 @@ func main() {
 
 	// Initialize and start the server
 	srv := server.NewServer(baseURL)
-	err := srv.ListenAndServe()
-	if err != nil {
-		panic(fmt.Sprintf("cannot start server: %s", err))
+
+	srvErr := srv.ListenAndServe()
+	if srvErr != nil {
+		panic(fmt.Sprintf("cannot start server: %s", srvErr))
 	}
 }
 
@@ -27,7 +38,7 @@ func returnBaseUrl() string {
 
 	host := os.Getenv("HOST")
 	if host == "" || currentEnv == "local" {
-		host = "localhost"
+		host = "0.0.0.0"
 	}
 
 	port := os.Getenv("PORT")
