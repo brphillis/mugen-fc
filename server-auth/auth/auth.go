@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/url"
 	"os"
 	"regexp"
 	"strings"
@@ -43,8 +42,10 @@ func NewAuth(baseURL string) {
 
 	authURL := os.Getenv("AUTH_URL")
 
-	// returns localhost if not valid url, need this for local as cant use docker named network name for google auth whitelist
-	fmt.Println(returnLocalHostIfNotValidUrlOrIp(authURL) + "/auth/callback/google")
+	// // returns localhost if not valid url, need this for local as cant use docker named network name for google auth whitelist
+	// fmt.Println(returnLocalHostIfNotValidUrlOrIp(authURL) + "/auth/callback/google")
+
+	fmt.Println("Auth Url Is:", authURL)
 
 	callbackURL := authURL + "/auth/callback/google"
 
@@ -149,29 +150,29 @@ func isDockerName(host string) bool {
 	return true
 }
 
-func returnLocalHostIfNotValidUrlOrIp(inputURL string) string {
-	appEnv := os.Getenv("APP_ENV")
-	if appEnv != "local" {
-		return inputURL
-	}
+// func returnLocalHostIfNotValidUrlOrIp(inputURL string) string {
+// 	appEnv := os.Getenv("APP_ENV")
+// 	if appEnv != "local" {
+// 		return inputURL
+// 	}
 
-	parsedURL, err := url.Parse(inputURL)
-	if err != nil {
-		fmt.Println("Error parsing URL:", err)
-		return ""
-	}
+// 	parsedURL, err := url.Parse(inputURL)
+// 	if err != nil {
+// 		fmt.Println("Error parsing URL:", err)
+// 		return ""
+// 	}
 
-	// Check if the hostname (excluding port) is a Docker service name
-	hostname := strings.Split(parsedURL.Host, ":")[0]
-	if isDockerName(hostname) {
-		// Modify the hostname to localhost, but keep the port if specified
-		port := strings.Split(parsedURL.Host, ":")[1]
-		if port != "" {
-			parsedURL.Host = "localhost:" + port
-		} else {
-			parsedURL.Host = "localhost"
-		}
-	}
+// 	// Check if the hostname (excluding port) is a Docker service name
+// 	hostname := strings.Split(parsedURL.Host, ":")[0]
+// 	if isDockerName(hostname) {
+// 		// Modify the hostname to localhost, but keep the port if specified
+// 		port := strings.Split(parsedURL.Host, ":")[1]
+// 		if port != "" {
+// 			parsedURL.Host = "localhost:" + port
+// 		} else {
+// 			parsedURL.Host = "localhost"
+// 		}
+// 	}
 
-	return parsedURL.String()
-}
+// 	return parsedURL.String()
+// }

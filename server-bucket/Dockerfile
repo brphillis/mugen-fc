@@ -12,11 +12,11 @@ RUN go mod download
 # Copy the local package files to the container's workspace.
 COPY . .
 
-# Copy your service account key file from the project root into the container
-COPY key.json /app/key.json
+# # Copy your service account key file from the project root into the container
+# COPY key.json /app/key.json
 
-# Set the Google Application Credentials environment variable
-ENV GOOGLE_APPLICATION_CREDENTIALS=/app/key.json
+# # Set the Google Application Credentials environment variable
+# ENV GOOGLE_APPLICATION_CREDENTIALS=/app/key.json
 
 # Build the application
 RUN CGO_ENABLED=0 GOOS=linux go build -o /docker-gs-ping
