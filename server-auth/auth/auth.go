@@ -151,6 +151,11 @@ func isDockerName(host string) bool {
 }
 
 func returnLocalHostIfNotValidUrlOrIp(inputURL string) string {
+	appEnv := os.Getenv("APP_ENV")
+	if appEnv != "local" {
+		return inputURL
+	}
+
 	parsedURL, err := url.Parse(inputURL)
 	if err != nil {
 		fmt.Println("Error parsing URL:", err)

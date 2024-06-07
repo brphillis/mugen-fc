@@ -1,45 +1,45 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
+# Environment files
 /server-bucket/.env
 /server-auth/.env
 /server-game/.env
 /client/.env
 
+# Service-specific files
 /server-bucket/key.json
 
-# dependencies
+# Dependency directories
 /client/node_modules
 /client/.pnp
 .pnp.js
 .yarn/install-state.gz
 
-# testing
+# Testing artifacts
 /client/coverage
 
-# next.js
+# Next.js specific files
 /client/.next/
 /client/out/
 /client/public/characters/*.zip
 
-# production
+# Production build files
 /client/build
 
-# misc
+# Miscellaneous files
 .DS_Store
 *.pem
 
-# debug
+# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# env files
+# Local environment variables
 .env*.local
 *.env
 
-# vercel
+# Vercel platform specific
 .vercel
 
-# typescript
+# TypeScript
 *.tsbuildinfo
 next-env.d.ts

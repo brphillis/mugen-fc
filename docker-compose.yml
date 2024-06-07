@@ -13,6 +13,7 @@ services:
       - GAMESERVER_URL=${GAMESERVER_URL}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - APP_ENV=${APP_ENV}
     restart: unless-stopped
 
   server-bucket:
@@ -26,6 +27,7 @@ services:
       - AUTH_URL=${AUTH_URL}
       - BUCKET_URL=${BUCKET_URL}
       - GAMESERVER_URL=${GAMESERVER_URL}
+      - APP_ENV=${APP_ENV}
     restart: unless-stopped
 
   server-game:
@@ -39,4 +41,5 @@ services:
       - AUTH_URL=${AUTH_URL}
       - BUCKET_URL=${BUCKET_URL}
       - GAMESERVER_URL=${GAMESERVER_URL}
+      - APP_ENV=${APP_ENV}
     restart: unless-stopped
