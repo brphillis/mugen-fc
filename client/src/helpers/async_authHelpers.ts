@@ -19,13 +19,11 @@ export const get_authenticatedUser = async (
       options.headers = headers;
     }
 
-    console.log("AUTH SERVER URL", authServerUrl);
-    if (process.env.NEXT_PUBLIC_AUTH_SERVER_URL) {
-      console.log(
-        "ENVAUTH SERVER URL",
-        process.env.NEXT_PUBLIC_AUTH_SERVER_URL
-      );
-    }
+    console.log(
+      `getting authenticated user from endpoint: ${
+        authServerUrl ? authServerUrl : process.env.NEXT_PUBLIC_AUTH_SERVER_URL
+      }/auth`
+    );
 
     const response = await fetch(
       `${
@@ -34,15 +32,16 @@ export const get_authenticatedUser = async (
       options
     );
 
-    console.log("RES IS", response);
+    console.log(
+      "response from getting authenticated user from endpoint: ",
+      response
+    );
 
     if (!response.ok) {
       return { error: `Error: ${response.statusText}` };
     }
 
     const user = await response.json();
-
-    console.log("todo: authenticated user", user);
 
     return { user };
   } catch (error) {

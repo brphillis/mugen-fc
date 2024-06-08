@@ -34,10 +34,10 @@ export const AuthContextProvider: FC<{
       const { user: foundUser } = await get_authenticatedUser();
 
       if (foundUser) {
-        console.log("FOUND USER", user);
+        console.log("found user: ", user);
         setUser(foundUser);
       } else {
-        console.log("ELSE STATEMENT");
+        console.log("user not found, redirecting...");
         window.location.href = `${authServerBaseUrl}/auth/google`;
       }
     };

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"net/url"
 	"os"
 	"regexp"
 	"strings"
@@ -45,9 +46,9 @@ func NewAuth(baseURL string) {
 	// // returns localhost if not valid url, need this for local as cant use docker named network name for google auth whitelist
 	// fmt.Println(returnLocalHostIfNotValidUrlOrIp(authURL) + "/auth/callback/google")
 
-	fmt.Println("Auth Url Is:", authURL)
+	fmt.Println("Auth Url Is:", returnLocalHostIfNotValidUrlOrIp(authURL))
 
-	callbackURL := authURL + "/auth/callback/google"
+	callbackURL := returnLocalHostIfNotValidUrlOrIp(authURL) + "/auth/callback/google"
 
 	Store = sessions.NewCookieStore([]byte(key))
 	Store.MaxAge(MaxAge)
@@ -110,7 +111,7 @@ func GetAuthCallbackFunction(w http.ResponseWriter, r *http.Request) {
 
 	clientUrl := os.Getenv("CLIENT_URL")
 
-	http.Redirect(w, r, clientUrl, http.StatusSeeOther)
+	http.Redirect(w, r, returnLocalHostIfNotValidUrlOrIp(clientUrl), http.StatusSeeOther)
 }
 
 func GetAuthenticatedUserSession(w http.ResponseWriter, r *http.Request) {
@@ -150,29 +151,29 @@ func isDockerName(host string) bool {
 	return true
 }
 
-// func returnLocalHostIfNotValidUrlOrIp(inputURL string) string {
-// 	appEnv := os.Getenv("APP_ENV")
-// 	if appEnv != "local" {
-// 		return inputURL
-// 	}
+func returnLocalHostIfNotValidUrlOrIp(inputURL string) string {
+	appEnv := os.Getenv("APP_ENV")
+	if appEnv != "local" {
+		return inputURL
+	}
 
-// 	parsedURL, err := url.Parse(inputURL)
-// 	if err != nil {
-// 		fmt.Println("Error parsing URL:", err)
-// 		return ""
-// 	}
+	parsedURL, err := url.Parse(inputURL)
+	if err != nil {
+		fmt.Println("Error parsing URL:", err)
+		return ""
+	}
 
-// 	// Check if the hostname (excluding port) is a Docker service name
-// 	hostname := strings.Split(parsedURL.Host, ":")[0]
-// 	if isDockerName(hostname) {
-// 		// Modify the hostname to localhost, but keep the port if specified
-// 		port := strings.Split(parsedURL.Host, ":")[1]
-// 		if port != "" {
-// 			parsedURL.Host = "localhost:" + port
-// 		} else {
-// 			parsedURL.Host = "localhost"
-// 		}
-// 	}
+	// Check if the hostname (excluding port) is a Docker service name
+	hostname := strings.Split(parsedURL.Host, ":")[0]
+	if isDockerName(hostname) {
+		// Modify the hostname to localhost, but keep the port if specified
+		port := strings.Split(parsedURL.Host, ":")[1]
+		if port != "" {
+			parsedURL.Host = "localhost:" + port
+		} else {
+			parsedURL.Host = "localhost"
+		}
+	}
 
-// 	return parsedURL.String()
-// }
+	return parsedURL.String()
+}
