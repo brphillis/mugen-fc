@@ -31,7 +31,10 @@ export const AuthContextProvider: FC<{
 
   useEffect(() => {
     const handleAuthenticateUser = async () => {
-      const { user: foundUser } = await get_authenticatedUser();
+      const { user: foundUser } = await get_authenticatedUser(
+        undefined,
+        authServerBaseUrl
+      );
 
       if (foundUser) {
         console.log("found user: ", user);
