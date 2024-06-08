@@ -32,6 +32,8 @@ export const get_authenticatedUser = async (
 
     const user = await response.json();
 
+    console.log("todo: authenticated user", user);
+
     return { user };
   } catch (error) {
     return {

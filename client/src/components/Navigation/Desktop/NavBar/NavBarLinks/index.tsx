@@ -17,6 +17,7 @@ const NavBarLinks = () => {
           <Link
             key={"mainNavItem_" + label}
             href={href}
+            prefetch={false}
             className={`cursor-pointer py-3 px-6 mx-1 max-lg:px-3 max-xl:text-sm 
             max-xs:text-sm transition-colors duration-300 hover:text-white border-b-none border-brand-primary-dark/75
             ${onPath ? "text-white" : ""}`}
