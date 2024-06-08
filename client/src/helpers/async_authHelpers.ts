@@ -19,12 +19,22 @@ export const get_authenticatedUser = async (
       options.headers = headers;
     }
 
+    console.log("AUTH SERVER URL", authServerUrl);
+    if (process.env.NEXT_PUBLIC_AUTH_SERVER_URL) {
+      console.log(
+        "ENVAUTH SERVER URL",
+        process.env.NEXT_PUBLIC_AUTH_SERVER_URL
+      );
+    }
+
     const response = await fetch(
       `${
         authServerUrl ? authServerUrl : process.env.NEXT_PUBLIC_AUTH_SERVER_URL
       }/auth`,
       options
     );
+
+    console.log("RES IS", response);
 
     if (!response.ok) {
       return { error: `Error: ${response.statusText}` };
