@@ -32,7 +32,6 @@ export const AuthContextProvider: FC<{
   useEffect(() => {
     const handleAuthenticateUser = async () => {
       const { user: foundUser } = await get_authenticatedUser(
-        undefined,
         authServerBaseUrl
       );
 

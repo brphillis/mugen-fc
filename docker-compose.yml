@@ -7,13 +7,13 @@ services:
       - "5000:5000"
     environment:
       - PORT=5000
-      - CLIENT_URL=${CLIENT_URL}
+      - APP_ENV=${APP_ENV}
       - AUTH_URL=${AUTH_URL}
       - BUCKET_URL=${BUCKET_URL}
+      - CLIENT_URL=${CLIENT_URL}
       - GAMESERVER_URL=${GAMESERVER_URL}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-      - APP_ENV=${APP_ENV}
     restart: unless-stopped
 
   server-bucket:
@@ -23,11 +23,11 @@ services:
       - "4000:4000"
     environment:
       - PORT=4000
-      - CLIENT_URL=${CLIENT_URL}
+      - APP_ENV=${APP_ENV}
       - AUTH_URL=${AUTH_URL}
       - BUCKET_URL=${BUCKET_URL}
+      - CLIENT_URL=${CLIENT_URL}
       - GAMESERVER_URL=${GAMESERVER_URL}
-      - APP_ENV=${APP_ENV}
     restart: unless-stopped
 
   server-game:
@@ -37,11 +37,11 @@ services:
       - "8000:8000"
     environment:
       - PORT=8000
-      - CLIENT_URL=${CLIENT_URL}
+      - APP_ENV=${APP_ENV}
       - AUTH_URL=${AUTH_URL}
       - BUCKET_URL=${BUCKET_URL}
+      - CLIENT_URL=${CLIENT_URL}
       - GAMESERVER_URL=${GAMESERVER_URL}
-      - APP_ENV=${APP_ENV}
     restart: unless-stopped
 
   mugen-client:
@@ -51,8 +51,8 @@ services:
       - "3000:3000"
     environment:
       - PORT=3000
-      - NEXT_PUBLIC_AUTH_SERVER_URL=${NEXT_PUBLIC_AUTH_SERVER_URL}
+      - AUTH_URL=${AUTH_URL}
       - BUCKET_URL=${BUCKET_URL}
-      - NEXT_PUBLIC_GAME_SERVER_URL=${NEXT_PUBLIC_GAME_SERVER_URL}
-      - NEXT_PUBLIC_GAME_SERVER_SOCKET_URL=${NEXT_PUBLIC_GAME_SERVER_SOCKET_URL}
+      - GAMESERVER_SOCKET_URL=${GAMESERVER_SOCKET_URL}
+      - GAMESERVER_URL=${GAMESERVER_URL}
     restart: unless-stopped

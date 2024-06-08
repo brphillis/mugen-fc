@@ -8,7 +8,13 @@ type Props = { params: { id: string } };
 export default async function Page({ params }: Props) {
   const { id } = params;
 
-  const { user } = await get_authenticatedUser(headers());
+  const auth_Endpoint = process.env.AUTH_URL;
+
+  if (!auth_Endpoint) {
+    throw new Error("Auth Endpoint Not Found");
+  }
+
+  const { user } = await get_authenticatedUser(auth_Endpoint, headers());
 
   if (!user) {
     throw new Error("User Not Found");

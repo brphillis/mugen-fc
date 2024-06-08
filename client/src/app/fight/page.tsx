@@ -7,8 +7,14 @@ import Script from "next/script";
 type Props = { searchParams: { id: string } };
 
 export default async function Page({ searchParams }: Props) {
+  const auth_Endpoint = process.env.AUTH_URL;
+
+  if (!auth_Endpoint) {
+    throw new Error("Auth Endpoint Not Found");
+  }
+
   const { id } = searchParams;
-  const { user } = await get_authenticatedUser(headers());
+  const { user } = await get_authenticatedUser(auth_Endpoint, headers());
 
   if (!user) {
     throw new Error("User Not Found");
@@ -24,7 +30,7 @@ export default async function Page({ searchParams }: Props) {
   const playerTwoName = room?.playerTwoState.name?.toLocaleLowerCase();
 
   const response = await fetch(
-    `${process.env.BUCKET_SERVER_URL}/api/characters?playerOne=${playerOneName}&playerTwo=${playerTwoName}`
+    `${process.env.BUCKET_URL}/api/characters?playerOne=${playerOneName}&playerTwo=${playerTwoName}`
   );
 
   if (!response.ok) {
@@ -35,17 +41,15 @@ export default async function Page({ searchParams }: Props) {
 
   return (
     <div className="mt-12">
-      {process.env.NEXT_PUBLIC_GAME_SERVER_SOCKET_URL && (
+      {process.env.GAMESERVER_SOCKET_URL && (
         <Game
-          gameSocketURL={process.env.NEXT_PUBLIC_GAME_SERVER_SOCKET_URL}
+          gameSocketURL={process.env.GAMESERVER_SOCKET_URL}
           encodedGameFilesString={JSON.stringify(base64Data)}
           user={user}
           room={room}
         />
       )}
-      {!process.env.NEXT_PUBLIC_GAME_SERVER_SOCKET_URL && (
-        <div>Invalid Game Socket</div>
-      )}
+      {!process.env.GAMESERVER_SOCKET_URL && <div>Invalid Game Socket</div>}
       <Script defer async strategy="beforeInteractive" src="/mugen.js" />
     </div>
   );

@@ -6,11 +6,9 @@ import { NextResponse } from "next/server";
 export default async function Page() {
   const { rooms } = await get_Rooms(true);
 
-  if (process.env.NEXT_PUBLIC_AUTH_SERVER_URL) {
+  if (process.env.AUTH_URL) {
     return (
-      <AuthContextProvider
-        authServerUrl={process.env.NEXT_PUBLIC_AUTH_SERVER_URL}
-      >
+      <AuthContextProvider authServerUrl={process.env.AUTH_URL}>
         <RoomManager initialRooms={rooms} />
       </AuthContextProvider>
     );

@@ -2,8 +2,8 @@ import { ReadonlyHeaders } from "next/dist/server/web/spec-extension/adapters/he
 
 // pass headers when fetching user next serverside
 export const get_authenticatedUser = async (
-  headers?: ReadonlyHeaders,
-  authServerUrl?: string
+  authServerUrl: string,
+  headers?: ReadonlyHeaders
 ): Promise<{
   user?: User;
   error?: string;
@@ -20,17 +20,10 @@ export const get_authenticatedUser = async (
     }
 
     console.log(
-      `getting authenticated user from endpoint: ${
-        authServerUrl ? authServerUrl : process.env.NEXT_PUBLIC_AUTH_SERVER_URL
-      }/auth`
+      `getting authenticated user from endpoint: ${authServerUrl}/auth`
     );
 
-    const response = await fetch(
-      `${
-        authServerUrl ? authServerUrl : process.env.NEXT_PUBLIC_AUTH_SERVER_URL
-      }/auth`,
-      options
-    );
+    const response = await fetch(`${authServerUrl}/auth`, options);
 
     console.log(
       "response from getting authenticated user from endpoint: ",

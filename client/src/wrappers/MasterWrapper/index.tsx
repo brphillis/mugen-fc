@@ -6,21 +6,20 @@ import { NextResponse } from "next/server";
 
 const MasterWrapper = ({
   children,
+  authServerUrl,
   useWelcomeMessage,
   user,
 }: {
   children: React.ReactNode;
+  authServerUrl: string;
   useWelcomeMessage?: boolean;
   user?: User;
 }) => {
   const trigger = false;
 
-  if (process.env.NEXT_PUBLIC_AUTH_SERVER_URL) {
+  if (authServerUrl) {
     return (
-      <AuthContextProvider
-        user={user}
-        authServerUrl={process.env.NEXT_PUBLIC_AUTH_SERVER_URL}
-      >
+      <AuthContextProvider user={user} authServerUrl={authServerUrl}>
         <UIContextProvider>
           {children}
           {useWelcomeMessage && <WelcomeBackToast trigger={trigger} />}
