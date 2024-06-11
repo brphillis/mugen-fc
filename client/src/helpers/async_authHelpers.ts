@@ -88,7 +88,7 @@ export const get_authenticatedUser = async (
         return { error: `error: ${newAuthResponse.statusText}` };
       }
 
-      console.log(newAuthResponse);
+      console.log("newauth response: ", newAuthResponse);
 
       return { redirectUrl: newAuthResponse.url };
     }

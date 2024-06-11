@@ -115,6 +115,9 @@ func GetAuthCallbackFunction(w http.ResponseWriter, r *http.Request) {
 func GetAuthenticatedUserSession(w http.ResponseWriter, r *http.Request) {
 	session, err := Store.Get(r, "session-name")
 	if err != nil {
+		fmt.Println("ERROR FINDING SESH", err)
+	}
+	if session == nil {
 		http.Error(w, "User not authenticated", http.StatusUnauthorized)
 		return
 	}
