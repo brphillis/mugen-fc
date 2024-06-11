@@ -38,7 +38,8 @@ export const Game = ({
     window.currentPlayerNumber = returnPlayerNumber(user, room);
     window.gameFiles = JSON.parse(encodedGameFilesString);
 
-    const url = `${gameSocketURL}${fightId}`;
+    const url = `${gameSocketURL}/ws/room/${fightId}`;
+
     window.mugenSocketUrl = url;
   }, []);
 

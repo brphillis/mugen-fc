@@ -1,43 +1,43 @@
+export const dynamic = "force-dynamic";
+
 import { Lobby } from "@/modules/Lobby";
 import { post_JoinRoom } from "@/helpers/async_roomHelpers";
 import { get_authenticatedUser } from "@/helpers/async_authHelpers";
 import { headers } from "next/headers";
+import { correctHost } from "@/helpers/envHelpers";
 
 type Props = { params: { id: string } };
 
 export default async function Page({ params }: Props) {
   const { id } = params;
-
-  const auth_Endpoint = process.env.AUTH_URL;
-
-  if (!auth_Endpoint) {
-    throw new Error("Auth Endpoint Not Found");
-  }
-
-  const { user } = await get_authenticatedUser(auth_Endpoint, headers());
+  const { user, error: authError } = await get_authenticatedUser(headers());
 
   if (!user) {
-    throw new Error("User Not Found");
+    throw new Error("user not found");
   }
 
-  const { room } = await post_JoinRoom(id, headers());
+  const { room, error: roomError } = await post_JoinRoom(
+    id,
+    headers(),
+    process.env.GAMESERVER_URL!
+  );
 
   if (!room) {
-    throw new Error("Error Joining Room");
+    throw new Error("error joining room");
   }
+
+  const socketURL = process.env.GAMESERVER_SOCKET_URL;
 
   return (
     <>
-      {process.env.NEXT_PUBLIC_GAME_SERVER_SOCKET_URL && (
+      {socketURL ? (
         <Lobby
-          gameSocketURL={process.env.NEXT_PUBLIC_GAME_SERVER_SOCKET_URL}
+          gameSocketURL={correctHost(socketURL, true)}
           user={user}
           room={room}
         />
-      )}
-
-      {!process.env.NEXT_PUBLIC_GAME_SERVER_SOCKET_URL && (
-        <div>Invalid Game Socket</div>
+      ) : (
+        <div>invalid socket url</div>
       )}
     </>
   );

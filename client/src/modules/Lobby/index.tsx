@@ -26,28 +26,28 @@ export const Lobby = ({ gameSocketURL, user, room }: Props) => {
 
   const charMeta = [
     {
-      name: "WildWolf",
+      name: "wildwolf",
     },
     {
-      name: "Aner",
+      name: "aner",
     },
     {
-      name: "Balto",
+      name: "balto",
     },
     {
-      name: "Laurence",
+      name: "laurence",
     },
     {
-      name: "Alou",
+      name: "alou",
     },
     {
-      name: "Bob",
+      name: "bob",
     },
     {
-      name: "Syota",
+      name: "syota",
     },
     {
-      name: "Iori",
+      name: "iori",
     },
   ];
 
@@ -70,7 +70,7 @@ export const Lobby = ({ gameSocketURL, user, room }: Props) => {
   };
 
   useEffect(() => {
-    const url = `${gameSocketURL}${params.id}`;
+    const url = `${gameSocketURL}/ws/room/${params.id}`;
 
     webSocket.current = new WebSocket(url);
 
@@ -107,13 +107,14 @@ export const Lobby = ({ gameSocketURL, user, room }: Props) => {
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
-
+    // both players ready - initiate countdown then navigate to fight
     if (playerOneState?.ready && playerTwoState?.ready) {
       intervalId = setInterval(() => {
         setCountDown((currentCountDown) => {
           if (currentCountDown === 1) {
             clearInterval(intervalId);
             window.location.href = `/fight?id=${params.id}`;
+
             return 0;
           }
           return currentCountDown - 1;
@@ -141,7 +142,11 @@ export const Lobby = ({ gameSocketURL, user, room }: Props) => {
                 >
                   <img
                     onClick={() => handleChangeCharacter(c.name)}
-                    src={"/char/portrait/" + c.name + ".png"}
+                    src={
+                      "https://storage.cloud.google.com/mugen-fc/characters/portrait/" +
+                      c.name +
+                      ".png"
+                    }
                     className="w-full h-full object-cover cursor-pointer"
                   />
                 </div>

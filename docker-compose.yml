@@ -1,10 +1,11 @@
-version: "3.8"
 services:
   server-auth:
     container_name: server-auth
     build: ./server-auth
     ports:
       - "5000:5000"
+    env_file:
+      - path: ./.env
     environment:
       - PORT=5000
       - APP_ENV=${APP_ENV}
@@ -21,6 +22,8 @@ services:
     build: ./server-bucket
     ports:
       - "4000:4000"
+    env_file:
+      - path: ./.env
     environment:
       - PORT=4000
       - APP_ENV=${APP_ENV}
@@ -35,6 +38,8 @@ services:
     build: ./server-game
     ports:
       - "8000:8000"
+    env_file:
+      - path: ./.env
     environment:
       - PORT=8000
       - APP_ENV=${APP_ENV}
@@ -49,10 +54,13 @@ services:
     build: ./client
     ports:
       - "3000:3000"
+    env_file:
+      - path: ./.env
     environment:
       - PORT=3000
       - AUTH_URL=${AUTH_URL}
       - BUCKET_URL=${BUCKET_URL}
-      - GAMESERVER_SOCKET_URL=${GAMESERVER_SOCKET_URL}
+      - APP_ENV=${APP_ENV}
       - GAMESERVER_URL=${GAMESERVER_URL}
+      - GAMESERVER_SOCKET_URL=${GAMESERVER_SOCKET_URL}
     restart: unless-stopped

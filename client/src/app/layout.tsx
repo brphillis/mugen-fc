@@ -17,13 +17,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const auth_Endpoint = process.env.AUTH_URL;
-
-  if (!auth_Endpoint) {
-    throw new Error("Auth Endpoint Not Found");
-  }
-
-  const { user } = await get_authenticatedUser(auth_Endpoint, headers());
+  const { user, error } = await get_authenticatedUser(headers());
 
   return (
     <html lang="en">

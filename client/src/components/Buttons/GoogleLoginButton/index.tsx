@@ -2,14 +2,13 @@
 
 import React from "react";
 import { Icon } from "@/components/Icons/Icon";
+import { useRouter } from "next/navigation";
 
-type Props = {
-  authServerUrl: string;
-};
+export const GoogleLoginButton = () => {
+  const router = useRouter();
 
-export const GoogleLoginButton = ({ authServerUrl }: Props) => {
   const handleLogin = () => {
-    window.location.href = `${authServerUrl}/auth/google`;
+    router.push(`/rooms`);
   };
 
   return (

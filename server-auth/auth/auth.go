@@ -44,10 +44,6 @@ func NewAuth(baseURL string) {
 	authURL := os.Getenv("AUTH_URL")
 
 	// // returns localhost if not valid url, need this for local as cant use docker named network name for google auth whitelist
-	// fmt.Println(returnLocalHostIfNotValidUrlOrIp(authURL) + "/auth/callback/google")
-
-	fmt.Println("Auth Url Is:", returnLocalHostIfNotValidUrlOrIp(authURL))
-
 	callbackURL := returnLocalHostIfNotValidUrlOrIp(authURL) + "/auth/callback/google"
 
 	Store = sessions.NewCookieStore([]byte(key))

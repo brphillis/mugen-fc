@@ -1,21 +1,36 @@
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
+import { correctHost } from "@/helpers/envHelpers";
 import { RoomManager } from "@/modules/RoomManager";
 import { get_Rooms } from "@/helpers/async_roomHelpers";
 import { AuthContextProvider } from "@/context/AuthContext";
-import { NextResponse } from "next/server";
+import { get_authenticatedUser } from "@/helpers/async_authHelpers";
 
 export default async function Page() {
-  const { rooms } = await get_Rooms(true);
+  const {
+    user: foundUser,
+    redirectUrl,
+    error: authError,
+  } = await get_authenticatedUser(headers());
 
-  if (process.env.AUTH_URL) {
+  if (redirectUrl) {
+    return redirect(redirectUrl);
+  }
+
+  const gameServerURL = process.env.GAMESERVER_URL;
+
+  const { rooms, error: roomError } = await get_Rooms(gameServerURL!, true);
+
+  if (foundUser) {
     return (
-      <AuthContextProvider authServerUrl={process.env.AUTH_URL}>
-        <RoomManager initialRooms={rooms} />
+      <AuthContextProvider user={foundUser}>
+        <RoomManager
+          gameServerURL={correctHost(gameServerURL!, true)}
+          initialRooms={rooms}
+        />
       </AuthContextProvider>
     );
   } else {
-    return NextResponse.json(
-      { error: "Authorization Server Not Found" },
-      { status: 401 }
-    );
+    return <div>{authError || roomError || "an error has occurred"}</div>;
   }
 }

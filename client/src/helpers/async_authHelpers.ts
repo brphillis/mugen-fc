@@ -1,13 +1,18 @@
 import { ReadonlyHeaders } from "next/dist/server/web/spec-extension/adapters/headers";
 
-// pass headers when fetching user next serverside
 export const get_authenticatedUser = async (
-  authServerUrl: string,
-  headers?: ReadonlyHeaders
+  headers: ReadonlyHeaders
 ): Promise<{
   user?: User;
+  redirectUrl?: string;
   error?: string;
 }> => {
+  let authServerUrl = process.env.AUTH_URL;
+
+  if (!authServerUrl) {
+    return { error: "no auth server url" };
+  }
+
   try {
     const options: RequestInit = {
       method: "GET",
@@ -19,27 +24,27 @@ export const get_authenticatedUser = async (
       options.headers = headers;
     }
 
-    console.log(
-      `getting authenticated user from endpoint: ${authServerUrl}/auth`
-    );
-
     const response = await fetch(`${authServerUrl}/auth`, options);
 
-    console.log(
-      "response from getting authenticated user from endpoint: ",
-      response
-    );
+    if (response.ok) {
+      const user = await response.json();
 
-    if (!response.ok) {
-      return { error: `Error: ${response.statusText}` };
+      return { user };
+    } else {
+      const newAuthResponse = await fetch(
+        `${authServerUrl}/auth/google`,
+        options
+      );
+
+      if (!newAuthResponse.ok) {
+        return { error: `error: ${newAuthResponse.statusText}` };
+      }
+
+      return { redirectUrl: newAuthResponse.url };
     }
-
-    const user = await response.json();
-
-    return { user };
   } catch (error) {
     return {
-      error: `Failed to get Authenticated User: ${(error as Error).message}`,
+      error: `(catch) get_authenticateduser error: ${(error as Error).message}`,
     };
   }
 };

@@ -1,3 +1,4 @@
+import { capitalizeFirst } from "@/helpers/stringHelpers";
 import React from "react";
 
 type Props = {
@@ -15,7 +16,11 @@ const SelectedCharacter = ({ playerState, playerNumber }: Props) => {
       {playerState?.name ? (
         <img
           key={`selectedcharacterportrait_` + playerState?.name}
-          src={"/char/anim/" + playerState?.name + ".gif"}
+          src={
+            "https://storage.cloud.google.com/mugen-fc/characters/anim/" +
+            playerState?.name +
+            ".gif"
+          }
           className={`w-auto h-full p-3 ${
             playerNumber === 2 ? "-scale-x-100" : ""
           }`}
@@ -28,7 +33,7 @@ const SelectedCharacter = ({ playerState, playerNumber }: Props) => {
 
       {playerState?.name && (
         <div className="absolute w-full bg-black/75 h-[45px] bottom-0 flex items-center justify-center text-xl">
-          {playerState.name}
+          {capitalizeFirst(playerState.name)}
         </div>
       )}
     </div>

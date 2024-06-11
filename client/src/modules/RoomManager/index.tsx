@@ -2,17 +2,18 @@
 
 import React, { useContext, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Icon } from "@/components/Icons/Icon";
+import { AuthContext } from "@/context/AuthContext";
 import BasicButton from "@/components/Buttons/BasicButton";
 import BasicInput from "@/components/Forms/Input/BasicInput";
 import { get_Rooms, post_CreateRoom } from "@/helpers/async_roomHelpers";
-import { AuthContext } from "@/context/AuthContext";
-import { Icon } from "@/components/Icons/Icon";
 
 type Props = {
+  gameServerURL: string;
   initialRooms?: RoomOverview[];
 };
 
-export const RoomManager = ({ initialRooms }: Props) => {
+export const RoomManager = ({ gameServerURL, initialRooms }: Props) => {
   const [createRoomName, setCreateRoomName] = useState<string>("Room Name");
   const [currentRooms, setCurrentRooms] = useState<RoomOverview[] | undefined>(
     initialRooms
@@ -22,7 +23,11 @@ export const RoomManager = ({ initialRooms }: Props) => {
   const router = useRouter();
 
   const handleCreateRoom = async () => {
-    const { roomId } = await post_CreateRoom(createRoomName, userName);
+    const { roomId, error } = await post_CreateRoom(
+      gameServerURL,
+      createRoomName,
+      userName
+    );
 
     if (roomId) {
       router.push(`/lobby/${roomId}`);
@@ -34,7 +39,7 @@ export const RoomManager = ({ initialRooms }: Props) => {
   };
 
   const handleRefreshRooms = async () => {
-    const { rooms } = await get_Rooms(true);
+    const { rooms, error } = await get_Rooms(gameServerURL, true);
 
     if (rooms && rooms.length > 0) {
       setCurrentRooms(rooms);
