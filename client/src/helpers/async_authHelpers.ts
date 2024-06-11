@@ -70,6 +70,8 @@ export const get_authenticatedUser = async (
 
     const response = await fetch(`${authServerUrl}/auth`, options);
 
+    console.log("get_authenticatedUser response: ", response);
+
     if (response.ok) {
       const user = await response.json();
 
