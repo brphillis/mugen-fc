@@ -128,7 +128,6 @@ func GetAuthenticatedUserSession(w http.ResponseWriter, r *http.Request) {
 	userInterface, ok := session.Values["user"]
 	if !ok {
 		// User data not found in the session.
-
 		fmt.Println("err: 56000 - there was no user found in session")
 		http.Error(w, "no user found in session", http.StatusUnauthorized)
 		return

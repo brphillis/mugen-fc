@@ -1,0 +1,68 @@
+name: Build and Push Docker images
+
+on:
+  push:
+    branches:
+      - main # Set your deployment branch
+  pull_request:
+    branches:
+      - main # Set your deployment branch
+
+env:
+  PROJECT_ID: avid-atrium-414511 # Google Cloud project ID
+  REPO_NAME: mugen-fc-repository # Name of your repository in Artifact Registry
+
+jobs:
+  build_and_push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Set up Google Cloud
+        uses: google-github-actions/setup-gcloud@v0.4.0
+        with:
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          project_id: ${{ env.PROJECT_ID }}
+
+      - name: Configure Docker for Google Cloud
+        run: gcloud auth configure-docker asia-southeast1-docker.pkg.dev
+
+      - name: Build and push Docker image for server-auth
+        uses: docker/build-push-action@v2
+        with:
+          context: ./server-auth
+          file: ./server-auth/Dockerfile
+          tags: asia-southeast1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/server-auth:latest
+          push: true
+
+      - name: Build and push Docker image for server-bucket
+        uses: docker/build-push-action@v2
+        with:
+          context: ./server-bucket
+          file: ./server-bucket/Dockerfile
+          tags: asia-southeast1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/server-bucket:latest
+          push: true
+
+      - name: Build and push Docker image for server-game
+        uses: docker/build-push-action@v2
+        with:
+          context: ./server-game
+          file: ./server-game/Dockerfile
+          tags: asia-southeast1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/server-game:latest
+          push: true
+
+      - name: Build and push Docker image for client
+        uses: docker/build-push-action@v2
+        with:
+          context: ./client
+          file: ./client/Dockerfile
+          tags: asia-southeast1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/client:latest
+          push: true
