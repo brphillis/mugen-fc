@@ -24,7 +24,7 @@ import (
 const (
 	key    = "randomStringExample"
 	MaxAge = 86400 * 3 // 3 days
-	IsProd = false
+	IsProd = true
 )
 
 // Make the store variable a package-level variable
@@ -42,6 +42,7 @@ func NewAuth(baseURL string) {
 	googleClientSecret := os.Getenv("GOOGLE_CLIENT_SECRET")
 
 	authURL := os.Getenv("AUTH_URL")
+	appEnv := os.Getenv("APP_ENV")
 
 	// // returns localhost if not valid url, need this for local as cant use docker named network name for google auth whitelist
 	callbackURL := returnLocalHostIfNotValidUrlOrIp(authURL) + "/auth/callback/google"
@@ -50,7 +51,12 @@ func NewAuth(baseURL string) {
 	Store.MaxAge(MaxAge)
 	Store.Options.Path = "/"
 	Store.Options.HttpOnly = true
-	Store.Options.Secure = IsProd
+
+	if appEnv == "local" {
+		Store.Options.Secure = false
+	} else {
+		Store.Options.Secure = true
+	}
 
 	gothic.Store = Store
 
@@ -115,9 +121,6 @@ func GetAuthCallbackFunction(w http.ResponseWriter, r *http.Request) {
 func GetAuthenticatedUserSession(w http.ResponseWriter, r *http.Request) {
 	session, err := Store.Get(r, "session-name")
 	if err != nil {
-		fmt.Println("ERROR FINDING SESH", err)
-	}
-	if session == nil {
 		http.Error(w, "User not authenticated", http.StatusUnauthorized)
 		return
 	}
