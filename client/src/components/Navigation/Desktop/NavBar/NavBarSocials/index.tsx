@@ -1,25 +1,32 @@
-import { GoogleLoginButton } from "@/components/Buttons/GoogleLoginButton";
-import { Icon } from "@/components/Icons/Icon";
 import React from "react";
+import { GoogleLoginButton } from "@/components/Buttons/GoogleLoginButton";
+import { UserTray } from "./UserTray";
+import { correctHost } from "@/helpers/envHelpers";
 
 type Props = {
   user?: User;
 };
 
 const NavBarSocials = ({ user }: Props) => {
-  const { userName } = user || {};
+  const authServerUrl = process.env.AUTH_URL;
 
   return (
-    <div className="flex flex-row justify-end items-center gap-6 w-[250px] max-md:hidden pr-6">
-      {!user ? (
-        <GoogleLoginButton />
-      ) : (
-        <div className="select-none flex flex-row items-center gap-3">
-          <Icon icon="person" />
-          <div>{userName}</div>
+    <>
+      {authServerUrl ? (
+        <div className="flex flex-row justify-end items-center gap-6 w-[320px] max-md:hidden pr-3">
+          {!user ? (
+            <GoogleLoginButton />
+          ) : (
+            <UserTray
+              user={user}
+              authServerUrl={correctHost(authServerUrl, true)}
+            />
+          )}
         </div>
+      ) : (
+        <div>auth disabled</div>
       )}
-    </div>
+    </>
   );
 };
 

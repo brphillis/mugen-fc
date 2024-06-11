@@ -17,7 +17,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { user, error } = await get_authenticatedUser(headers());
+  const { user, error } = await get_authenticatedUser(headers(), true);
 
   return (
     <html lang="en">

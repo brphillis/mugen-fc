@@ -107,6 +107,8 @@ func GetAuthCallbackFunction(w http.ResponseWriter, r *http.Request) {
 
 	clientUrl := os.Getenv("CLIENT_URL")
 
+	fmt.Println("session created successfully: ", session)
+
 	http.Redirect(w, r, returnLocalHostIfNotValidUrlOrIp(clientUrl), http.StatusSeeOther)
 }
 

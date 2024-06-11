@@ -1,7 +1,51 @@
 import { ReadonlyHeaders } from "next/dist/server/web/spec-extension/adapters/headers";
 
+export const get_client_logoutGoogle = async (
+  authUrl: string
+): Promise<{
+  success?: string;
+  error?: string;
+}> => {
+  console.log("clicked");
+
+  if (!authUrl) {
+    console.log("return err");
+    return { error: "no auth server url" };
+  }
+
+  try {
+    const options: RequestInit = {
+      method: "GET",
+      credentials: "include",
+      cache: "no-store",
+    };
+
+    const url = authUrl + "/logout";
+
+    console.log("fetching at", url);
+
+    const response = await fetch(url, options);
+
+    if (!response.ok) {
+      console.log("err", `${response.statusText}`);
+      return { error: `error logging out: ${response.statusText}` };
+    }
+
+    const success = await response.json();
+
+    console.log("res", success);
+
+    return { success };
+  } catch (error) {
+    return {
+      error: `(catch) get_logoutgoogle error: ${(error as Error).message}`,
+    };
+  }
+};
+
 export const get_authenticatedUser = async (
-  headers: ReadonlyHeaders
+  headers: ReadonlyHeaders,
+  preventRedirect?: boolean
 ): Promise<{
   user?: User;
   redirectUrl?: string;
@@ -30,6 +74,8 @@ export const get_authenticatedUser = async (
       const user = await response.json();
 
       return { user };
+    } else if (preventRedirect) {
+      return { user: undefined };
     } else {
       const newAuthResponse = await fetch(
         `${authServerUrl}/auth/google`,
@@ -39,6 +85,8 @@ export const get_authenticatedUser = async (
       if (!newAuthResponse.ok) {
         return { error: `error: ${newAuthResponse.statusText}` };
       }
+
+      console.log(newAuthResponse);
 
       return { redirectUrl: newAuthResponse.url };
     }
