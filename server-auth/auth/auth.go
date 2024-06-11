@@ -125,10 +125,20 @@ func GetAuthenticatedUserSession(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, ok := session.Values["user"].(goth.User)
+	userInterface, ok := session.Values["user"]
 	if !ok {
-		fmt.Println("err: 2000 - get session error is: ", err)
+		// User data not found in the session.
+
+		fmt.Println("err: 56000 - there was no user found in session")
 		http.Error(w, "no user found in session", http.StatusUnauthorized)
+		return
+	}
+
+	user, ok := userInterface.(goth.User)
+	if !ok {
+		// User data is not of type goth.User.
+		fmt.Println("err: 3022000 - user found in session is of wrong type")
+		http.Error(w, "user found in session is of incorrect type", http.StatusUnauthorized)
 		return
 	}
 
