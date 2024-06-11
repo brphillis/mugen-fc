@@ -24,7 +24,6 @@ import (
 const (
 	key    = "randomStringExample"
 	MaxAge = 86400 * 3 // 3 days
-	IsProd = true
 )
 
 // Make the store variable a package-level variable
@@ -107,7 +106,7 @@ func GetAuthCallbackFunction(w http.ResponseWriter, r *http.Request) {
 	session.Values["user"] = user
 	err = session.Save(r, w)
 	if err != nil {
-		http.Error(w, "Failed to save session", http.StatusInternalServerError)
+		http.Error(w, "failed to save session", http.StatusInternalServerError)
 		return
 	}
 
@@ -121,13 +120,15 @@ func GetAuthCallbackFunction(w http.ResponseWriter, r *http.Request) {
 func GetAuthenticatedUserSession(w http.ResponseWriter, r *http.Request) {
 	session, err := Store.Get(r, "session-name")
 	if err != nil {
-		http.Error(w, "User not authenticated", http.StatusUnauthorized)
+		fmt.Println("err: 9000 - get session error is: ", err)
+		http.Error(w, "user not authenticated", http.StatusUnauthorized)
 		return
 	}
 
 	user, ok := session.Values["user"].(goth.User)
 	if !ok {
-		http.Error(w, "No user found in session", http.StatusUnauthorized)
+		fmt.Println("err: 2000 - get session error is: ", err)
+		http.Error(w, "no user found in session", http.StatusUnauthorized)
 		return
 	}
 
@@ -163,7 +164,7 @@ func returnLocalHostIfNotValidUrlOrIp(inputURL string) string {
 
 	parsedURL, err := url.Parse(inputURL)
 	if err != nil {
-		fmt.Println("Error parsing URL:", err)
+		fmt.Println("error parsing url:", err)
 		return ""
 	}
 
