@@ -37,7 +37,7 @@ const Navbar = ({ user }: Props) => {
           href="/"
           className="w-[260px] max-lg:w-full text-2xl text-brand-white"
         >
-          MFC3
+          MFC100
         </Link>
 
         <NavBarLinks />

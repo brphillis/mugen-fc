@@ -93,22 +93,22 @@ jobs:
           GAMESERVER_URL: ${{ secrets.GAMESERVER_URL }}
           GAMESERVER_SOCKET_URL: ${{ secrets.GAMESERVER_SOCKET_URL }}
 
-      - name: Perform rolling update for Auth
+      - name: Perform rolling update for server-auth pods
         run: |
-          gcloud container clusters get-credentials mugen-fc-auth-cluster --zone=asia-southeast2-a
-          kubectl set image deployment mugen-fc-auth server-auth-sha256-1=asia-southeast1-docker.pkg.dev/avid-atrium-414511/mugen-fc-repository/server-auth:latest
+          gcloud container clusters get-credentials server-auth-cluster --zone=asia-southeast2-a
+          kubectl apply -f ./server-auth/resources.yaml
 
-      - name: Perform rolling update for Bucket
+      - name: Perform rolling update for server-bucket pods
         run: |
-          gcloud container clusters get-credentials mugen-fc-bucket-cluster --zone=asia-south2-a
-          kubectl set image deployment mugen-fc-bucket server-bucket-sha256-1=asia-southeast1-docker.pkg.dev/avid-atrium-414511/mugen-fc-repository/server-bucket:latest
+          gcloud container clusters get-credentials server-bucket-cluster --zone=asia-east1-a
+          kubectl apply -f ./server-bucket/resources.yaml
 
-      - name: Perform rolling update for Gameserver
+      - name: Perform rolling update for server-game pods
         run: |
-          gcloud container clusters get-credentials mugen-fc-gameserver-cluster --zone=asia-south1-a
-          kubectl set image deployment mugen-fc-gameserver server-game-sha256-1=asia-southeast1-docker.pkg.dev/avid-atrium-414511/mugen-fc-repository/server-game:latest
+          gcloud container clusters get-credentials server-game-cluster --zone=asia-east2-a
+          kubectl apply -f ./server-game/resources.yaml
 
-      - name: Perform rolling update for Client
+      - name: Perform rolling update for client pods
         run: |
-          gcloud container clusters get-credentials mugen-fc-client-cluster --zone=asia-southeast1-a
-          kubectl set image deployment mugen-fc-client client-sha256-1=asia-southeast1-docker.pkg.dev/avid-atrium-414511/mugen-fc-repository/server-client:latest
+          gcloud container clusters get-credentials client-cluster --zone=asia-southeast1-a
+          kubectl apply -f ./client/resources.yaml
