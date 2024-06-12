@@ -96,23 +96,19 @@ jobs:
       - name: Perform rolling update for server-auth pods
         run: |
           gcloud container clusters get-credentials server-auth-cluster --zone=asia-east2-a
-          cp ./server-auth/resources.yaml ./server-auth/resources.yaml
           kubectl apply -f ./server-auth/resources.yaml
 
       - name: Perform rolling update for server-bucket pods
         run: |
           gcloud container clusters get-credentials server-bucket-cluster --zone=asia-east1-a
-          cp ./server-bucket/resources.yaml ./server-bucket/resources.yaml
           kubectl apply -f ./server-bucket/resources.yaml
 
       - name: Perform rolling update for server-game pods
         run: |
           gcloud container clusters get-credentials server-game-cluster --zone=asia-south1-a
-          cp ./server-game/resources.yaml ./server-game/resources.yaml
           kubectl apply -f ./server-game/resources.yaml
 
       - name: Perform rolling update for client pods
         run: |
           gcloud container clusters get-credentials client-cluster --zone=asia-southeast1-a
-          cp ./client/resources.yaml ./client/resources.yaml
           kubectl apply -f ./client/resources.yaml
