@@ -1,115 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    deployment.kubernetes.io/revision: "1"
-  creationTimestamp: "2024-06-12T07:16:27Z"
-  generation: 1
-  labels:
-    app: server-game
-  managedFields:
-    - apiVersion: apps/v1
-      fieldsType: FieldsV1
-      fieldsV1:
-        f:metadata:
-          f:labels:
-            .: {}
-            f:app: {}
-        f:spec:
-          f:progressDeadlineSeconds: {}
-          f:replicas: {}
-          f:revisionHistoryLimit: {}
-          f:selector: {}
-          f:strategy:
-            f:rollingUpdate:
-              .: {}
-              f:maxSurge: {}
-              f:maxUnavailable: {}
-            f:type: {}
-          f:template:
-            f:metadata:
-              f:labels:
-                .: {}
-                f:app: {}
-            f:spec:
-              f:containers:
-                k:{"name":"server-game-1"}:
-                  .: {}
-                  f:image: {}
-                  f:imagePullPolicy: {}
-                  f:name: {}
-                  f:resources: {}
-                  f:terminationMessagePath: {}
-                  f:terminationMessagePolicy: {}
-              f:dnsPolicy: {}
-              f:restartPolicy: {}
-              f:schedulerName: {}
-              f:securityContext: {}
-              f:terminationGracePeriodSeconds: {}
-      manager: GoogleCloudConsole
-      operation: Update
-      time: "2024-06-12T07:16:27Z"
-    - apiVersion: apps/v1
-      fieldsType: FieldsV1
-      fieldsV1:
-        f:metadata:
-          f:annotations:
-            .: {}
-            f:deployment.kubernetes.io/revision: {}
-        f:status:
-          f:availableReplicas: {}
-          f:conditions:
-            .: {}
-            k:{"type":"Available"}:
-              .: {}
-              f:lastTransitionTime: {}
-              f:lastUpdateTime: {}
-              f:message: {}
-              f:reason: {}
-              f:status: {}
-              f:type: {}
-            k:{"type":"Progressing"}:
-              .: {}
-              f:lastTransitionTime: {}
-              f:lastUpdateTime: {}
-              f:message: {}
-              f:reason: {}
-              f:status: {}
-              f:type: {}
-          f:observedGeneration: {}
-          f:readyReplicas: {}
-          f:replicas: {}
-          f:updatedReplicas: {}
-      manager: kube-controller-manager
-      operation: Update
-      subresource: status
-      time: "2024-06-12T07:17:05Z"
   name: server-game
   namespace: default
-  resourceVersion: "1739"
-  uid: 40cb5db5-3409-4002-a3d4-ffaf1afa008d
+  labels:
+    app: server-game
 spec:
-  progressDeadlineSeconds: 600
   replicas: 3
-  revisionHistoryLimit: 10
   selector:
     matchLabels:
       app: server-game
   strategy:
+    type: RollingUpdate
     rollingUpdate:
       maxSurge: 25%
       maxUnavailable: 25%
-    type: RollingUpdate
   template:
     metadata:
-      creationTimestamp: null
       labels:
         app: server-game
     spec:
       containers:
-        - image: asia-southeast1-docker.pkg.dev/avid-atrium-414511/mugen-fc-repository/server-game:latest
+        - name: server-game-1
+          image: asia-southeast1-docker.pkg.dev/avid-atrium-414511/mugen-fc-repository/server-game:latest
           imagePullPolicy: Always
-          name: server-game-1
           env:
             - name: CLIENT_URL
               value: $CLIENT_URL
@@ -127,22 +41,3 @@ spec:
       schedulerName: default-scheduler
       securityContext: {}
       terminationGracePeriodSeconds: 30
-status:
-  availableReplicas: 3
-  conditions:
-    - lastTransitionTime: "2024-06-12T07:17:05Z"
-      lastUpdateTime: "2024-06-12T07:17:05Z"
-      message: Deployment has minimum availability.
-      reason: MinimumReplicasAvailable
-      status: "True"
-      type: Available
-    - lastTransitionTime: "2024-06-12T07:16:27Z"
-      lastUpdateTime: "2024-06-12T07:17:05Z"
-      message: ReplicaSet "server-game-9659d658" has successfully progressed.
-      reason: NewReplicaSetAvailable
-      status: "True"
-      type: Progressing
-  observedGeneration: 1
-  readyReplicas: 3
-  replicas: 3
-  updatedReplicas: 3
