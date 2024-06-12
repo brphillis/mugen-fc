@@ -3,7 +3,6 @@ kind: Deployment
 metadata:
   annotations:
     deployment.kubernetes.io/revision: "1"
-    deployed: "$(date -u +'%Y-%m-%dT%H:%M:%SZ')"
   creationTimestamp: "2024-06-12T08:30:02Z"
   generation: 1
   labels:
