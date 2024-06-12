@@ -75,6 +75,7 @@ jobs:
           gcloud container clusters get-credentials server-auth-cluster --zone=asia-east2-a
           kubectl create secret generic server-secrets --from-literal=CLIENT_URL=${{ secrets.CLIENT_URL }} --from-literal=AUTH_URL=${{ secrets.AUTH_URL }} --from-literal=BUCKET_URL=${{ secrets.BUCKET_URL }} --from-literal=GAMESERVER_URL=${{ secrets.GAMESERVER_URL }} --from-literal=GAMESERVER_SOCKET_URL=${{ secrets.GAMESERVER_SOCKET_URL }} --from-literal=GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} --from-literal=GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} --dry-run=client -o yaml | kubectl apply -f -
           kubectl apply -f ./server-auth/resources.yaml
+          kubectl apply -f ./server-auth/ingress.yaml
 
       - name: Perform rolling update for server-bucket pods
         run: |
@@ -93,4 +94,3 @@ jobs:
           gcloud container clusters get-credentials client-cluster --zone=asia-southeast1-a
           kubectl create secret generic server-secrets --from-literal=CLIENT_URL=${{ secrets.CLIENT_URL }} --from-literal=AUTH_URL=${{ secrets.AUTH_URL }} --from-literal=BUCKET_URL=${{ secrets.BUCKET_URL }} --from-literal=GAMESERVER_URL=${{ secrets.GAMESERVER_URL }} --from-literal=GAMESERVER_SOCKET_URL=${{ secrets.GAMESERVER_SOCKET_URL }} --from-literal=GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} --from-literal=GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} --dry-run=client -o yaml | kubectl apply -f -
           kubectl apply -f ./client/resources.yaml
-          kubectl apply -f ./server-auth/ingress.yaml
