@@ -105,7 +105,7 @@ jobs:
 
       - name: Perform rolling update for Gameserver
         run: |
-          gcloud container clusters get-credentials mugen-fc-client-cluster --zone=asia-south1-a
+          gcloud container clusters get-credentials mugen-fc-gameserver-cluster --zone=asia-south1-a
           kubectl set image deployment mugen-fc-gameserver server-game-sha256-1=asia-southeast1-docker.pkg.dev/avid-atrium-414511/mugen-fc-repository/server-game:latest
 
       - name: Perform rolling update for Client
