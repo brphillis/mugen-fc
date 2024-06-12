@@ -45,13 +45,6 @@ jobs:
           file: ./server-auth/Dockerfile
           tags: asia-southeast1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/server-auth:latest
           push: true
-        env:
-          CLIENT_URL: ${{ secrets.CLIENT_URL }}
-          AUTH_URL: ${{ secrets.AUTH_URL }}
-          BUCKET_URL: ${{ secrets.BUCKET_URL }}
-          GAMESERVER_URL: ${{ secrets.GAMESERVER_URL }}
-          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
-          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
 
       - name: Build and push Docker image for server-bucket
         uses: docker/build-push-action@v2
@@ -60,11 +53,6 @@ jobs:
           file: ./server-bucket/Dockerfile
           tags: asia-southeast1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/server-bucket:latest
           push: true
-        env:
-          CLIENT_URL: ${{ secrets.CLIENT_URL }}
-          AUTH_URL: ${{ secrets.AUTH_URL }}
-          BUCKET_URL: ${{ secrets.BUCKET_URL }}
-          GAMESERVER_URL: ${{ secrets.GAMESERVER_URL }}
 
       - name: Build and push Docker image for server-game
         uses: docker/build-push-action@v2
@@ -73,11 +61,6 @@ jobs:
           file: ./server-game/Dockerfile
           tags: asia-southeast1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/server-game:latest
           push: true
-        env:
-          CLIENT_URL: ${{ secrets.CLIENT_URL }}
-          AUTH_URL: ${{ secrets.AUTH_URL }}
-          BUCKET_URL: ${{ secrets.BUCKET_URL }}
-          GAMESERVER_URL: ${{ secrets.GAMESERVER_URL }}
 
       - name: Build and push Docker image for client
         uses: docker/build-push-action@v2
@@ -86,12 +69,6 @@ jobs:
           file: ./client/Dockerfile
           tags: asia-southeast1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/client:latest
           push: true
-        env:
-          CLIENT_URL: ${{ secrets.CLIENT_URL }}
-          AUTH_URL: ${{ secrets.AUTH_URL }}
-          BUCKET_URL: ${{ secrets.BUCKET_URL }}
-          GAMESERVER_URL: ${{ secrets.GAMESERVER_URL }}
-          GAMESERVER_SOCKET_URL: ${{ secrets.GAMESERVER_SOCKET_URL }}
 
       - name: Perform rolling update for server-auth pods
         run: |
@@ -116,3 +93,4 @@ jobs:
           gcloud container clusters get-credentials client-cluster --zone=asia-southeast1-a
           kubectl create secret generic server-secrets --from-literal=CLIENT_URL=${{ secrets.CLIENT_URL }} --from-literal=AUTH_URL=${{ secrets.AUTH_URL }} --from-literal=BUCKET_URL=${{ secrets.BUCKET_URL }} --from-literal=GAMESERVER_URL=${{ secrets.GAMESERVER_URL }} --from-literal=GAMESERVER_SOCKET_URL=${{ secrets.GAMESERVER_SOCKET_URL }} --from-literal=GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} --from-literal=GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} --dry-run=client -o yaml | kubectl apply -f -
           kubectl apply -f ./client/resources.yaml
+          kubectl apply -f ./server-auth/ingress.yaml
