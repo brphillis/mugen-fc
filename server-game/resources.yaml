@@ -26,13 +26,25 @@ spec:
           imagePullPolicy: Always
           env:
             - name: CLIENT_URL
-              value: $CLIENT_URL
+              valueFrom:
+                secretKeyRef:
+                  name: server-secrets
+                  key: CLIENT_URL
             - name: AUTH_URL
-              value: $AUTH_URL
+              valueFrom:
+                secretKeyRef:
+                  name: server-secrets
+                  key: AUTH_URL
             - name: BUCKET_URL
-              value: $BUCKET_URL
+              valueFrom:
+                secretKeyRef:
+                  name: server-secrets
+                  key: BUCKET_URL
             - name: GAMESERVER_URL
-              value: $GAMESERVER_URL
+              valueFrom:
+                secretKeyRef:
+                  name: server-secrets
+                  key: GAMESERVER_URL
           resources: {}
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File

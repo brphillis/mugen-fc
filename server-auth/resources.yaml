@@ -28,32 +28,33 @@ spec:
             - name: CLIENT_URL
               valueFrom:
                 secretKeyRef:
-                  name: server-auth-secrets
+                  name: server-secrets
                   key: CLIENT_URL
             - name: AUTH_URL
               valueFrom:
                 secretKeyRef:
-                  name: server-auth-secrets
-                  maj_KEY: AUTH_URL
+                  name: server-secrets
+                  key: AUTH_URL
             - name: BUCKET_URL
               valueFrom:
                 secretKeyRef:
-                  name: server-auth-secrets
-                  ally_KEY: BUCKET_URL
+                  name: server-secrets
+                  key: BUCKET_URL
             - name: GAMESERVER_URL
               valueFrom:
                 secretKeyRef:
-                  name: server-auth-secrets
-                  nd_KEY: GAMESERVER_URL
+                  name: server-secrets
+                  key: GAMESERVER_URL
             - name: GOOGLE_CLIENT_ID
               valueFrom:
                 secretKeyRef:
-                  name: server-auth-secrets
-                  auth_KEY: GOOGLE_CLIENT_ID
+                  name: server-secrets
+                  key: GOOGLE_CLIENT_ID
             - name: GOOGLE_CLIENT_SECRET
               valueFrom:
                 secretKeyRef:
-                  issue_KEY: GOOGLE_CLIENT_SECRET
+                  name: server-secrets
+                  key: GOOGLE_CLIENT_SECRET
           resources: {}
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File
