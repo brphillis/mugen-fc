@@ -96,19 +96,23 @@ jobs:
       - name: Perform rolling update for server-auth pods
         run: |
           gcloud container clusters get-credentials server-auth-cluster --zone=asia-east2-a
-          kubectl patch deployment server-auth -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"deployment\":\"$(date +'%Y-%m-%d %H:%M:%S')\"}}}}}"
+          cp ./resources.yaml ./resources.yaml
+          kubectl apply -f ./resources.yaml
 
       - name: Perform rolling update for server-bucket pods
         run: |
           gcloud container clusters get-credentials server-bucket-cluster --zone=asia-east1-a
-          kubectl patch deployment server-bucket -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"deployment\":\"$(date +'%Y-%m-%d %H:%M:%S')\"}}}}}"
+          cp ./resources.yaml ./resources.yaml
+          kubectl apply -f ./resources.yaml
 
       - name: Perform rolling update for server-game pods
         run: |
           gcloud container clusters get-credentials server-game-cluster --zone=asia-south1-a
-          kubectl patch deployment server-game -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"deployment\":\"$(date +'%Y-%m-%d %H:%M:%S')\"}}}}}"
+          cp ./resources.yaml ./resources.yaml
+          kubectl apply -f ./resources.yaml
 
       - name: Perform rolling update for client pods
         run: |
           gcloud container clusters get-credentials client-cluster --zone=asia-southeast1-a
-          kubectl patch deployment client -p "{\"spec\":{\"template\":{\"metadata\":{\"annotations\":{\"deployment\":\"$(date +'%Y-%m-%d %H:%M:%S')\"}}}}}"
+          cp ./resources.yaml ./resources.yaml
+          kubectl apply -f ./resources.yaml
