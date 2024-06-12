@@ -89,3 +89,23 @@ jobs:
           BUCKET_URL: ${{ secrets.BUCKET_URL }}
           GAMESERVER_URL: ${{ secrets.GAMESERVER_URL }}
           GAMESERVER_SOCKET_URL: ${{ secrets.GAMESERVER_SOCKET_URL }}
+
+      - name: Perform rolling update for Auth
+        run: |
+          gcloud container clusters get-credentials mugen-fc-auth-cluster --zone=asia-southeast2-a
+          kubectl set image deployment mugen-fc-auth server-auth-sha256-1=asia-southeast1-docker.pkg.dev/avid-atrium-414511/mugen-fc-repository/server-auth:latest
+
+      - name: Perform rolling update for Bucket
+        run: |
+          gcloud container clusters get-credentials mugen-fc-bucket-cluster --zone=asia-south2-a
+          kubectl set image deployment mugen-fc-bucket server-bucket-sha256-1=asia-southeast1-docker.pkg.dev/avid-atrium-414511/mugen-fc-repository/server-bucket:latest
+
+      - name: Perform rolling update for Gameserver
+        run: |
+          gcloud container clusters get-credentials mugen-fc-client-cluster --zone=asia-south1-a
+          kubectl set image deployment mugen-fc-gameserver server-game-sha256-1=asia-southeast1-docker.pkg.dev/avid-atrium-414511/mugen-fc-repository/server-game:latest
+
+      - name: Perform rolling update for Client
+        run: |
+          gcloud container clusters get-credentials mugen-fc-client-cluster --zone=asia-southeast1-a
+          kubectl set image deployment mugen-fc-client server-client-sha256-1=asia-southeast1-docker.pkg.dev/avid-atrium-414511/mugen-fc-repository/server-client:latest
