@@ -6,7 +6,7 @@ metadata:
     kubernetes.io/ingress.class: "gce"
 spec:
   rules:
-    - host: mugen-fc.mooo.com
+    - host: mugenfc.crabdance.com
       http:
         paths:
           - path: /
