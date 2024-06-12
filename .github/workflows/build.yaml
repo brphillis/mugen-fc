@@ -23,6 +23,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Install envsubst
+        run: sudo apt-get install gettext-base
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
@@ -43,7 +46,7 @@ jobs:
         with:
           context: ./server-auth
           file: ./server-auth/Dockerfile
-          tags: asia-southeast1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/server-auth:latest
+          tags: asia-southeast1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/server-auth:${{ github.sha }}
           push: true
 
       - name: Build and push Docker image for server-bucket
@@ -51,7 +54,7 @@ jobs:
         with:
           context: ./server-bucket
           file: ./server-bucket/Dockerfile
-          tags: asia-southeast1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/server-bucket:latest
+          tags: asia-southeast1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/server-bucket:${{ github.sha }}
           push: true
 
       - name: Build and push Docker image for server-game
@@ -59,7 +62,7 @@ jobs:
         with:
           context: ./server-game
           file: ./server-game/Dockerfile
-          tags: asia-southeast1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/server-game:latest
+          tags: asia-southeast1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/server-game:${{ github.sha }}
           push: true
 
       - name: Build and push Docker image for client
@@ -67,30 +70,37 @@ jobs:
         with:
           context: ./client
           file: ./client/Dockerfile
-          tags: asia-southeast1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/client:latest
+          tags: asia-southeast1-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO_NAME }}/client:${{ github.sha }}
           push: true
 
       - name: Perform rolling update for server-auth pods
         run: |
           gcloud container clusters get-credentials server-auth-cluster --zone=asia-east2-a
           kubectl create secret generic server-secrets --from-literal=CLIENT_URL=${{ secrets.CLIENT_URL }} --from-literal=AUTH_URL=${{ secrets.AUTH_URL }} --from-literal=BUCKET_URL=${{ secrets.BUCKET_URL }} --from-literal=GAMESERVER_URL=${{ secrets.GAMESERVER_URL }} --from-literal=GAMESERVER_SOCKET_URL=${{ secrets.GAMESERVER_SOCKET_URL }} --from-literal=GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} --from-literal=GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} --dry-run=client -o yaml | kubectl apply -f -
-          kubectl apply -f ./server-auth/resources.yaml
-          kubectl apply -f ./server-auth/ingress.yaml
+          export IMAGE_TAG=${{ github.sha }}
+          envsubst < ./server-auth/resources.yaml > ./server-auth/resources-final.yaml
+          kubectl apply -f ./server-auth/resources-final.yaml
 
       - name: Perform rolling update for server-bucket pods
         run: |
           gcloud container clusters get-credentials server-bucket-cluster --zone=asia-east1-a
           kubectl create secret generic server-secrets --from-literal=CLIENT_URL=${{ secrets.CLIENT_URL }} --from-literal=AUTH_URL=${{ secrets.AUTH_URL }} --from-literal=BUCKET_URL=${{ secrets.BUCKET_URL }} --from-literal=GAMESERVER_URL=${{ secrets.GAMESERVER_URL }} --from-literal=GAMESERVER_SOCKET_URL=${{ secrets.GAMESERVER_SOCKET_URL }} --from-literal=GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} --from-literal=GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} --dry-run=client -o yaml | kubectl apply -f -
-          kubectl apply -f ./server-bucket/resources.yaml
+          export IMAGE_TAG=${{ github.sha }}
+          envsubst < ./server-bucket/resources.yaml > ./server-bucket/resources-final.yaml
+          kubectl apply -f ./server-bucket/resources-final.yaml
 
       - name: Perform rolling update for server-game pods
         run: |
           gcloud container clusters get-credentials server-game-cluster --zone=asia-south1-a
           kubectl create secret generic server-secrets --from-literal=CLIENT_URL=${{ secrets.CLIENT_URL }} --from-literal=AUTH_URL=${{ secrets.AUTH_URL }} --from-literal=BUCKET_URL=${{ secrets.BUCKET_URL }} --from-literal=GAMESERVER_URL=${{ secrets.GAMESERVER_URL }} --from-literal=GAMESERVER_SOCKET_URL=${{ secrets.GAMESERVER_SOCKET_URL }} --from-literal=GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} --from-literal=GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} --dry-run=client -o yaml | kubectl apply -f -
-          kubectl apply -f ./server-game/resources.yaml
+          export IMAGE_TAG=${{ github.sha }}
+          envsubst < ./server-game/resources.yaml > ./server-game/resources-final.yaml
+          kubectl apply -f ./server-game/resources-final.yaml
 
       - name: Perform rolling update for client pods
         run: |
           gcloud container clusters get-credentials client-cluster --zone=asia-southeast1-a
           kubectl create secret generic server-secrets --from-literal=CLIENT_URL=${{ secrets.CLIENT_URL }} --from-literal=AUTH_URL=${{ secrets.AUTH_URL }} --from-literal=BUCKET_URL=${{ secrets.BUCKET_URL }} --from-literal=GAMESERVER_URL=${{ secrets.GAMESERVER_URL }} --from-literal=GAMESERVER_SOCKET_URL=${{ secrets.GAMESERVER_SOCKET_URL }} --from-literal=GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} --from-literal=GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} --dry-run=client -o yaml | kubectl apply -f -
-          kubectl apply -f ./client/resources.yaml
+          export IMAGE_TAG=${{ github.sha }}
+          envsubst < ./client/resources.yaml > ./client/resources-final.yaml
+          kubectl apply -f ./client/resources-final.yaml

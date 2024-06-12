@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - name: server-game-1
-          image: asia-southeast1-docker.pkg.dev/avid-atrium-414511/mugen-fc-repository/server-game:latest
+          image: asia-southeast1-docker.pkg.dev/avid-atrium-414511/mugen-fc-repository/server-game:${IMAGE_TAG}
           imagePullPolicy: Always
           env:
             - name: CLIENT_URL
