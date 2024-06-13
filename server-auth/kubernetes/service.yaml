@@ -9,7 +9,7 @@ metadata:
   namespace: default
 spec:
   allocateLoadBalancerNodePorts: true
-  externalTrafficPolicy: Cluster
+  externalTrafficPolicy: Local
   ports:
     - nodePort: 30753
       port: 5000
