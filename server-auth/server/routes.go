@@ -12,6 +12,7 @@ import (
 
 func (s *Server) RegisterRoutes() http.Handler {
 	r := mux.NewRouter()
+	r.HandleFunc("/health", HealthCheckHandler).Methods("GET")
 
 	r.HandleFunc("/auth", auth.GetAuthenticatedUserSession)
 	r.HandleFunc("/auth/{provider}", auth.StartAuthFunction)
@@ -35,4 +36,10 @@ func (s *Server) RegisterRoutes() http.Handler {
 	}).Methods("GET")
 
 	return r
+}
+
+func HealthCheckHandler(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK) // Return HTTP 200 OK
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{"status": "healthy"})
 }
