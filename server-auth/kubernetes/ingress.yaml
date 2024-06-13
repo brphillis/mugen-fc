@@ -1,0 +1,21 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: server-auth-ingress
+  namespace: default
+  annotations:
+    kubernetes.io/ingress.class: "gce"
+    ingress.kubernetes.io/affinity: "cookie"
+    ingress.kubernetes.io/session-cookie-name: "affinityCookie"
+    ingress.kubernetes.io/session-cookie-hash: "sha256"
+spec:
+  rules:
+    - http:
+        paths:
+          - path: /auth
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: server-auth-service
+                port:
+                  number: 5000

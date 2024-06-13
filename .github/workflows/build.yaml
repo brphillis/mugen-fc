@@ -81,6 +81,7 @@ jobs:
           envsubst < ./server-auth/kubernetes/resources-template.yaml > ./server-auth/kubernetes/resources.yaml
           kubectl apply -f ./server-auth/kubernetes/resources.yaml
           kubectl apply -f ./server-auth/kubernetes/service.yaml
+          kubectl apply -f ./server-auth/kubernetes/ingress.yaml
 
       - name: Perform rolling update for server-bucket pods
         run: |
@@ -106,3 +107,4 @@ jobs:
           envsubst < ./client/kubernetes/resources-template.yaml > ./client/kubernetes/resources.yaml
           kubectl apply -f ./client/kubernetes/resources.yaml
           kubectl apply -f ./client/kubernetes/service.yaml
+          kubectl apply -f ./client/kubernetes/ingress.yaml
