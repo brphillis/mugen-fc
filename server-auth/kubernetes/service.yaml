@@ -11,15 +11,10 @@ spec:
   allocateLoadBalancerNodePorts: true
   externalTrafficPolicy: Local
   ports:
-    - nodePort: 30753
-      port: 5000
-      protocol: TCP
-      targetPort: 5000
+    port: 5000
+    protocol: TCP
+    targetPort: 5000
   selector:
     app: server-auth
-  sessionAffinity: ClientIP # Enable client IP session affinity
-  type: LoadBalancer
-status:
-  loadBalancer:
-    ingress:
-      - ip: 34.150.20.75
+  sessionAffinity: ClientIP
+  type: ClusterIP
