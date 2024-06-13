@@ -8,8 +8,6 @@ metadata:
   name: server-auth-service
   namespace: default
 spec:
-  allocateLoadBalancerNodePorts: true
-  externalTrafficPolicy: Local
   ports:
     - port: 5000
       protocol: TCP
