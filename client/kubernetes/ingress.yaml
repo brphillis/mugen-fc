@@ -6,13 +6,13 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: "gce"
     ingress.kubernetes.io/affinity: "cookie"
-    ingress.kubernetes.io/session-cookie-name: "clientAffinityCookie"
+    ingress.kubernetes.io/session-cookie-name: "affinityCookie"
     ingress.kubernetes.io/session-cookie-hash: "sha256"
 spec:
   rules:
     - http:
         paths:
-          - path: /client
+          - path: /*
             pathType: ImplementationSpecific
             backend:
               service:

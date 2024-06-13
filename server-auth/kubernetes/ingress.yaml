@@ -12,7 +12,7 @@ spec:
   rules:
     - http:
         paths:
-          - path: /auth
+          - path: /*
             pathType: ImplementationSpecific
             backend:
               service:
