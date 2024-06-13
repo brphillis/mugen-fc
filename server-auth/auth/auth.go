@@ -88,9 +88,19 @@ func GetAuthCallbackFunction(w http.ResponseWriter, r *http.Request) {
 
 	r = r.WithContext(context.WithValue(r.Context(), "provider", provider))
 
+	fmt.Println("provider is: ", provider)
+
 	user, err := gothic.CompleteUserAuth(w, r)
 	if err != nil {
+		// Log the error and handle re-authentication
 		fmt.Printf("auth error: %v\n", err)
+
+		// Clear any existing session
+		session, _ := Store.Get(r, "session-name")
+		session.Options.MaxAge = -1 // This effectively deletes the session cookie
+		session.Save(r, w)
+
+		// Redirect to login to start the authentication process again
 		gothic.BeginAuthHandler(w, r)
 		return
 	}
