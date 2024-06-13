@@ -12,7 +12,7 @@ spec:
   rules:
     - http:
         paths:
-          - path: /*
+          - path: /auth/google
             pathType: ImplementationSpecific
             backend:
               service:
