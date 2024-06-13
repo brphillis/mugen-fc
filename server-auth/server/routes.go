@@ -12,7 +12,7 @@ import (
 
 func (s *Server) RegisterRoutes() http.Handler {
 	r := mux.NewRouter()
-	r.HandleFunc("/healthcheck", HealthCheckHandler).Methods("GET")
+	r.HandleFunc("/health", HealthCheckHandler).Methods("GET")
 
 	r.HandleFunc("/auth", auth.GetAuthenticatedUserSession)
 	r.HandleFunc("/auth/{provider}", auth.StartAuthFunction)
