@@ -11,9 +11,9 @@ spec:
   allocateLoadBalancerNodePorts: true
   externalTrafficPolicy: Local
   ports:
-    port: 5000
-    protocol: TCP
-    targetPort: 5000
+    - port: 5000
+      protocol: TCP
+      targetPort: 5000
   selector:
     app: server-auth
   sessionAffinity: ClientIP
