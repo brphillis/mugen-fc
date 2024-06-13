@@ -78,29 +78,31 @@ jobs:
           gcloud container clusters get-credentials server-auth-cluster --zone=asia-east2-a
           kubectl create secret generic server-secrets --from-literal=CLIENT_URL=${{ secrets.CLIENT_URL }} --from-literal=AUTH_URL=${{ secrets.AUTH_URL }} --from-literal=BUCKET_URL=${{ secrets.BUCKET_URL }} --from-literal=GAMESERVER_URL=${{ secrets.GAMESERVER_URL }} --from-literal=GAMESERVER_SOCKET_URL=${{ secrets.GAMESERVER_SOCKET_URL }} --from-literal=GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} --from-literal=GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} --dry-run=client -o yaml | kubectl apply -f -
           export IMAGE_TAG=${{ github.sha }}
-          envsubst < ./server-auth/resources.yaml > ./server-auth/resources-final.yaml
-          kubectl apply -f ./server-auth/resources-final.yaml
+          envsubst < ./server-auth/kubernetes/resources-template.yaml > ./server-auth/kubernetes/resources.yaml
+          kubectl apply -f ./server-auth/kubernetes/resources.yaml
+          kubectl apply -f ./server-auth/kubernetes/service.yaml
 
       - name: Perform rolling update for server-bucket pods
         run: |
           gcloud container clusters get-credentials server-bucket-cluster --zone=asia-east1-a
           kubectl create secret generic server-secrets --from-literal=CLIENT_URL=${{ secrets.CLIENT_URL }} --from-literal=AUTH_URL=${{ secrets.AUTH_URL }} --from-literal=BUCKET_URL=${{ secrets.BUCKET_URL }} --from-literal=GAMESERVER_URL=${{ secrets.GAMESERVER_URL }} --from-literal=GAMESERVER_SOCKET_URL=${{ secrets.GAMESERVER_SOCKET_URL }} --from-literal=GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} --from-literal=GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} --dry-run=client -o yaml | kubectl apply -f -
           export IMAGE_TAG=${{ github.sha }}
-          envsubst < ./server-bucket/resources.yaml > ./server-bucket/resources-final.yaml
-          kubectl apply -f ./server-bucket/resources-final.yaml
+          envsubst < ./server-bucket/kubernetes/resources-template.yaml > ./server-bucket/kubernetes/resources.yaml
+          kubectl apply -f ./server-bucket/kubernetes/resources.yaml
 
       - name: Perform rolling update for server-game pods
         run: |
           gcloud container clusters get-credentials server-game-cluster --zone=asia-south1-a
           kubectl create secret generic server-secrets --from-literal=CLIENT_URL=${{ secrets.CLIENT_URL }} --from-literal=AUTH_URL=${{ secrets.AUTH_URL }} --from-literal=BUCKET_URL=${{ secrets.BUCKET_URL }} --from-literal=GAMESERVER_URL=${{ secrets.GAMESERVER_URL }} --from-literal=GAMESERVER_SOCKET_URL=${{ secrets.GAMESERVER_SOCKET_URL }} --from-literal=GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} --from-literal=GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} --dry-run=client -o yaml | kubectl apply -f -
           export IMAGE_TAG=${{ github.sha }}
-          envsubst < ./server-game/resources.yaml > ./server-game/resources-final.yaml
-          kubectl apply -f ./server-game/resources-final.yaml
+          envsubst < ./server-game/kubernetes/resources-template.yaml > ./server-game/kubernetes/resources.yaml
+          kubectl apply -f ./server-game/kubernetes/resources.yaml
 
       - name: Perform rolling update for client pods
         run: |
           gcloud container clusters get-credentials client-cluster --zone=asia-southeast1-a
           kubectl create secret generic server-secrets --from-literal=CLIENT_URL=${{ secrets.CLIENT_URL }} --from-literal=AUTH_URL=${{ secrets.AUTH_URL }} --from-literal=BUCKET_URL=${{ secrets.BUCKET_URL }} --from-literal=GAMESERVER_URL=${{ secrets.GAMESERVER_URL }} --from-literal=GAMESERVER_SOCKET_URL=${{ secrets.GAMESERVER_SOCKET_URL }} --from-literal=GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} --from-literal=GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} --dry-run=client -o yaml | kubectl apply -f -
           export IMAGE_TAG=${{ github.sha }}
-          envsubst < ./client/resources.yaml > ./client/resources-final.yaml
-          kubectl apply -f ./client/resources-final.yaml
+          envsubst < ./client/kubernetes/resources-template.yaml > ./client/kubernetes/resources.yaml
+          kubectl apply -f ./client/kubernetes/resources.yaml
+          kubectl apply -f ./client/kubernetes/service.yaml
