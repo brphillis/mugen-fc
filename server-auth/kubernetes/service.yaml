@@ -15,5 +15,4 @@ spec:
   selector:
     app: server-auth
   sessionAffinity: ClientIP
-  externalTrafficPolicy: Cluster
   type: ClusterIP
