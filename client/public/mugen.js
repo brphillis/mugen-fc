@@ -2849,6 +2849,7 @@ function i(r) {
             console.log(
               "Maximum number of retries reached. Connection failed."
             );
+            window.disconnected = true;
             return;
           }
 
@@ -2878,7 +2879,6 @@ function i(r) {
         };
 
         window.mugenSocket.onclose = () => {
-          window.disconnected = true;
           console.log("WebSocket connection closed.");
           reconnect();
         };
