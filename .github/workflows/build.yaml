@@ -93,6 +93,7 @@ jobs:
           envsubst < ./server-game/kubernetes/resources-template.yaml > ./server-game/kubernetes/resources.yaml
           kubectl apply -f ./server-game/kubernetes/resources.yaml
           kubectl apply -f ./server-game/kubernetes/service.yaml
+          kubectl apply -f ./server-game/kubernetes/ingress.yaml
 
           envsubst < ./client/kubernetes/resources-template.yaml > ./client/kubernetes/resources.yaml
           kubectl apply -f ./client/kubernetes/resources.yaml
