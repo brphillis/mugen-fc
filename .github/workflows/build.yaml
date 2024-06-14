@@ -79,6 +79,8 @@ jobs:
           kubectl create secret generic server-secrets --from-literal=CLIENT_URL=${{ secrets.CLIENT_URL }} --from-literal=AUTH_URL=${{ secrets.AUTH_URL }} --from-literal=BUCKET_URL=${{ secrets.BUCKET_URL }} --from-literal=GAMESERVER_URL=${{ secrets.GAMESERVER_URL }} --from-literal=GAMESERVER_SOCKET_URL=${{ secrets.GAMESERVER_SOCKET_URL }} --from-literal=GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }} --from-literal=GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }} --dry-run=client -o yaml | kubectl apply -f -
           export IMAGE_TAG=${{ github.sha }}
 
+          kubectl apply -f ./client/kubernetes/backendconfig.yaml
+
           envsubst < ./server-auth/kubernetes/resources-template.yaml > ./server-auth/kubernetes/resources.yaml
           kubectl apply -f ./server-auth/kubernetes/resources.yaml
           kubectl apply -f ./server-auth/kubernetes/service.yaml

@@ -3,6 +3,7 @@ kind: Service
 metadata:
   annotations:
     cloud.google.com/neg: '{"ingress":true}'
+    cloud.google.com/backend-config: '{"default": "be"}'
   labels:
     app: client
   name: client-service
