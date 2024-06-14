@@ -48,13 +48,15 @@ func NewAuth(baseURL string) {
 	Store = sessions.NewCookieStore([]byte(key))
 	Store.MaxAge(MaxAge)
 	Store.Options.Path = "/"
+	Store.Options.Domain = ".crabdance.com"
 	Store.Options.HttpOnly = true
+	Store.Options.Secure = false
 
-	if appEnv == "local" {
-		Store.Options.Secure = false
-	} else {
-		Store.Options.Secure = true
-	}
+	// if appEnv == "local" {
+	// 	Store.Options.Secure = false
+	// } else {
+	// 	Store.Options.Secure = true
+	// }
 
 	gothic.Store = Store
 
