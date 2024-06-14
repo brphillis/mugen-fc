@@ -41,7 +41,7 @@ func NewAuth(baseURL string) {
 	// appEnv := os.Getenv("APP_ENV")
 
 	// // returns localhost if not valid url, need this for local as cant use docker named network name for google auth whitelist
-	// callbackURL := returnLocalHostIfNotValidUrlOrIp(authURL) + "/auth/callback/google"
+	// // callbackURL := returnLocalHostIfNotValidUrlOrIp(authURL) + "/auth/callback/google"
 
 	callbackURL := authURL + "/auth/callback/google"
 
