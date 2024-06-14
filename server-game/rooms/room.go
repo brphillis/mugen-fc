@@ -148,7 +148,7 @@ var upgrader = &websocket.Upgrader{
 func (r *room) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	socket, err := upgrader.Upgrade(w, req, nil)
 	if err != nil {
-		log.Fatal("ServeHTTP:", err)
+		log.Fatal("servehttp ftl error: ", err)
 		return
 	}
 	client := &client{
@@ -175,7 +175,7 @@ func (r *room) sendGameState(client *client) {
 		GameState:      r.gameState,
 	})
 	if err != nil {
-		log.Println("Error marshaling initial game state:", err)
+		log.Println("error marshaling initial game state:", err)
 		return
 	}
 	client.send <- msg
@@ -206,7 +206,7 @@ func (r *room) startBroadcast() {
 				})
 
 				if err != nil {
-					log.Println("Error marshaling game state:", err)
+					log.Println("error marshaling game state:", err)
 					return
 				}
 
@@ -272,7 +272,7 @@ func (r *room) initiateClientRound() {
 	})
 
 	if err != nil {
-		log.Println("Error marshaling start round:", err)
+		log.Println("error marshaling start round:", err)
 		return
 	}
 
@@ -328,7 +328,7 @@ func (r *room) declareWinner(winnerPlayerNumber int) {
 	})
 
 	if err != nil {
-		log.Println("Error marshaling game state:", err)
+		log.Println("error marshaling game state:", err)
 		return
 	}
 
@@ -344,7 +344,7 @@ func (r *room) declareWinner(winnerPlayerNumber int) {
 func (r *room) handlePlayerLeaveLobby(client *client) {
 	authenticatedUser, err := authenticateClient(client.headers)
 	if err != nil {
-		log.Printf("Authentication failed: %v", err)
+		log.Printf("authentication failed: %v", err)
 	}
 
 	if r.PlayerOneState.User == authenticatedUser {

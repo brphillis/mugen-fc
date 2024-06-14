@@ -71,34 +71,57 @@ export const Lobby = ({ gameSocketURL, user, room }: Props) => {
 
   useEffect(() => {
     const url = `${gameSocketURL}/ws/room/${params.id}`;
+    let retries = 0;
+    const maxRetries = 6;
+    let reconnectTimeout: NodeJS.Timeout;
 
-    webSocket.current = new WebSocket(url);
+    const connectWebSocket = () => {
+      webSocket.current = new WebSocket(url);
 
-    webSocket.current.onopen = () => {
-      console.log("WebSocket connection established");
+      webSocket.current.onopen = () => {
+        console.log("WebSocket connection established");
+        retries = 0; // Reset retry count upon successful connection
+      };
+
+      webSocket.current.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+
+        if (
+          (playerNumber === 1 && message?.playerOneState) ||
+          message?.playerTwoState
+        ) {
+          setPlayerOneState(message?.playerOneState);
+          setPlayerTwoState(message?.playerTwoState);
+        }
+      };
+
+      webSocket.current.onerror = (error) => {
+        console.error("WebSocket error", error);
+        reconnect();
+      };
+
+      webSocket.current.onclose = () => {
+        console.log("WebSocket connection closed");
+        reconnect();
+      };
     };
 
-    webSocket.current.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-
-      if (
-        (playerNumber === 1 && message?.playerOneState) ||
-        message?.playerTwoState
-      ) {
-        setPlayerOneState(message?.playerOneState);
-        setPlayerTwoState(message?.playerTwoState);
+    const reconnect = () => {
+      if (retries < maxRetries) {
+        retries++;
+        console.log(
+          `Attempting to reconnect (attempt ${retries} of ${maxRetries})...`
+        );
+        reconnectTimeout = setTimeout(connectWebSocket, 250); // Retry after 500ms
+      } else {
+        console.log("Maximum number of retries reached. Connection failed.");
       }
     };
 
-    webSocket.current.onerror = (error) => {
-      console.error("WebSocket error", error);
-    };
-
-    webSocket.current.onclose = () => {
-      console.log("WebSocket connection closed");
-    };
+    connectWebSocket();
 
     return () => {
+      clearTimeout(reconnectTimeout);
       if (webSocket.current) {
         webSocket.current.close();
       }

@@ -2836,19 +2836,35 @@ function i(r) {
       setSocketEvents() {
         window.mugenSocket = new WebSocket(window.mugenSocketUrl);
 
+        let reconnectTimeout;
+
+        const reconnect = () => {
+          if (!window.disconnected) {
+            return; // If not disconnected, no need for reconnection attempts
+          }
+
+          console.log("Attempting to reconnect...");
+          reconnectTimeout = setTimeout(() => {
+            window.mugenSocket = new WebSocket(yourWebSocketURL); // Reinitialize the WebSocket connection
+          }, 3000); // Retry after 3 seconds
+        };
+
         window.mugenSocket.onopen = () => {
           window.disconnected = false;
           console.log("WebSocket connection established.");
+          clearTimeout(reconnectTimeout); // Clear any pending reconnection attempts upon successful connection
         };
 
         window.mugenSocket.onerror = (error) => {
           window.disconnected = true;
           console.error("WebSocket error:", error);
+          reconnect();
         };
 
         window.mugenSocket.onclose = () => {
           window.disconnected = true;
           console.log("WebSocket connection closed.");
+          reconnect();
         };
 
         window.mugenSocket.onmessage = (event) => {

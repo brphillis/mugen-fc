@@ -39,7 +39,7 @@ func (rm *roomManager) CreateRoom(w http.ResponseWriter, r *http.Request) {
 	var data RoomCreateData
 
 	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		http.Error(w, "invalid request payload", http.StatusBadRequest)
 		return
 	}
 
@@ -50,7 +50,7 @@ func (rm *roomManager) CreateRoom(w http.ResponseWriter, r *http.Request) {
 	room := newRoom(roomID, rm, data)
 
 	if room == nil {
-		http.Error(w, "Failed to create room", http.StatusInternalServerError)
+		http.Error(w, "failed to create room", http.StatusInternalServerError)
 		return
 	}
 
@@ -101,7 +101,7 @@ func (rm *roomManager) GetRooms(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(rooms); err != nil {
-		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		http.Error(w, "failed to encode response", http.StatusInternalServerError)
 	}
 }
 
@@ -112,7 +112,7 @@ func (rm *roomManager) UpdatePlayerCharacter(w http.ResponseWriter, r *http.Requ
 
 	room, exists := rm.getRoom(roomID)
 	if !exists {
-		http.Error(w, "Room not found", http.StatusNotFound)
+		http.Error(w, "room not found", http.StatusNotFound)
 		return
 	}
 
@@ -121,7 +121,7 @@ func (rm *roomManager) UpdatePlayerCharacter(w http.ResponseWriter, r *http.Requ
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		http.Error(w, "invalid request payload", http.StatusBadRequest)
 		return
 	}
 
@@ -133,7 +133,7 @@ func (rm *roomManager) UpdatePlayerCharacter(w http.ResponseWriter, r *http.Requ
 	} else if player == "playerTwo" {
 		room.PlayerTwoState.Name = data.Name
 	} else {
-		http.Error(w, "Invalid player specified", http.StatusBadRequest)
+		http.Error(w, "invalid player specified", http.StatusBadRequest)
 		return
 	}
 
@@ -144,19 +144,19 @@ func (rm *roomManager) JoinRoom(w http.ResponseWriter, r *http.Request) {
 
 	authenticatedUser, err := authenticateClient(r.Header)
 	if err != nil {
-		log.Printf("Authentication failed: %v", err)
+		log.Printf("authentication failed: %v", err)
 		return
 	}
 
 	var data RoomJoinData
 	if err := json.NewDecoder(r.Body).Decode(&data); err != nil {
-		http.Error(w, "Invalid request payload", http.StatusBadRequest)
+		http.Error(w, "invalid request payload", http.StatusBadRequest)
 		return
 	}
 
 	room, exists := rm.getRoom(data.Id)
 	if !exists {
-		http.Error(w, "Room not found", http.StatusNotFound)
+		http.Error(w, "room not found", http.StatusNotFound)
 		return
 	}
 
@@ -184,7 +184,7 @@ func (rm *roomManager) JoinRoom(w http.ResponseWriter, r *http.Request) {
 
 		w.Header().Set("Content-Type", "application/json")
 		if err := json.NewEncoder(w).Encode(roomDetails); err != nil {
-			http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+			http.Error(w, "failed to encode response", http.StatusInternalServerError)
 		}
 	} else if room.PlayerOneState.User == authenticatedUser || room.PlayerTwoState.User == authenticatedUser {
 		room.structLock.RLock()
@@ -204,7 +204,7 @@ func (rm *roomManager) JoinRoom(w http.ResponseWriter, r *http.Request) {
 
 		w.Header().Set("Content-Type", "application/json")
 		if err := json.NewEncoder(w).Encode(roomDetails); err != nil {
-			http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+			http.Error(w, "failed to encode response", http.StatusInternalServerError)
 		}
 	} else {
 		w.WriteHeader(http.StatusConflict)
@@ -218,7 +218,7 @@ func (rm *roomManager) GetRoomDetails(w http.ResponseWriter, r *http.Request) {
 
 	room, exists := rm.getRoom(roomId)
 	if !exists {
-		http.Error(w, "Room not found", http.StatusNotFound)
+		http.Error(w, "room not found", http.StatusNotFound)
 		return
 	}
 
@@ -235,7 +235,7 @@ func (rm *roomManager) GetRoomDetails(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(w).Encode(details); err != nil {
-		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		http.Error(w, "failed to encode response", http.StatusInternalServerError)
 	}
 }
 
@@ -243,7 +243,7 @@ func (rm *roomManager) ServeWs(w http.ResponseWriter, r *http.Request) {
 	id := mux.Vars(r)["id"]
 	room, exists := rm.rooms[id]
 	if !exists {
-		http.Error(w, "Room not found", http.StatusNotFound)
+		http.Error(w, "room not found", http.StatusNotFound)
 		return
 	}
 	room.ServeHTTP(w, r)
