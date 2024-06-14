@@ -30,11 +30,11 @@ spec:
                 secretKeyRef:
                   name: server-secrets
                   key: CLIENT_URL
-            - name: AUTH_URL
+            - name: AUTH_URL_INTERNAL
               valueFrom:
                 secretKeyRef:
                   name: server-secrets
-                  key: AUTH_URL
+                  key: AUTH_URL_INTERNAL
             - name: BUCKET_URL
               valueFrom:
                 secretKeyRef:
