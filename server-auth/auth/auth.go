@@ -6,10 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/url"
 	"os"
-	"regexp"
-	"strings"
 	"time"
 
 	"github.com/goombaio/namegenerator"
@@ -44,7 +41,9 @@ func NewAuth(baseURL string) {
 	appEnv := os.Getenv("APP_ENV")
 
 	// // returns localhost if not valid url, need this for local as cant use docker named network name for google auth whitelist
-	callbackURL := returnLocalHostIfNotValidUrlOrIp(authURL) + "/auth/callback/google"
+	// callbackURL := returnLocalHostIfNotValidUrlOrIp(authURL) + "/auth/callback/google"
+
+	callbackURL := authURL + "/auth/callback/google"
 
 	Store = sessions.NewCookieStore([]byte(key))
 	Store.MaxAge(MaxAge)
@@ -124,7 +123,8 @@ func GetAuthCallbackFunction(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Println("session created successfully: ", session)
 
-	http.Redirect(w, r, returnLocalHostIfNotValidUrlOrIp(clientUrl), http.StatusSeeOther)
+	// http.Redirect(w, r, returnLocalHostIfNotValidUrlOrIp(clientUrl), http.StatusSeeOther)
+	http.Redirect(w, r, clientUrl, http.StatusSeeOther)
 }
 
 func GetAuthenticatedUserSession(w http.ResponseWriter, r *http.Request) {
@@ -160,44 +160,44 @@ func GetAuthenticatedUserSession(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(response)
 }
 
-func isDockerName(host string) bool {
-	// Check for ".com" domain
-	if strings.Contains(host, ".com") {
-		return false
-	}
+// func isDockerName(host string) bool {
+// 	// Check for ".com" domain
+// 	if strings.Contains(host, ".com") {
+// 		return false
+// 	}
 
-	// Regex to check for valid IP address
-	ipRegex := regexp.MustCompile(`^(\d{1,3}\.){3}\d{1,3}$`)
-	if ipRegex.MatchString(host) {
-		return false
-	}
+// 	// Regex to check for valid IP address
+// 	ipRegex := regexp.MustCompile(`^(\d{1,3}\.){3}\d{1,3}$`)
+// 	if ipRegex.MatchString(host) {
+// 		return false
+// 	}
 
-	return true
-}
+// 	return true
+// }
 
-func returnLocalHostIfNotValidUrlOrIp(inputURL string) string {
-	appEnv := os.Getenv("APP_ENV")
-	if appEnv != "local" {
-		return inputURL
-	}
+// func returnLocalHostIfNotValidUrlOrIp(inputURL string) string {
+// 	appEnv := os.Getenv("APP_ENV")
+// 	if appEnv != "local" {
+// 		return inputURL
+// 	}
 
-	parsedURL, err := url.Parse(inputURL)
-	if err != nil {
-		fmt.Println("error parsing url:", err)
-		return ""
-	}
+// 	parsedURL, err := url.Parse(inputURL)
+// 	if err != nil {
+// 		fmt.Println("error parsing url:", err)
+// 		return ""
+// 	}
 
-	// Check if the hostname (excluding port) is a Docker service name
-	hostname := strings.Split(parsedURL.Host, ":")[0]
-	if isDockerName(hostname) {
-		// Modify the hostname to localhost, but keep the port if specified
-		port := strings.Split(parsedURL.Host, ":")[1]
-		if port != "" {
-			parsedURL.Host = "localhost:" + port
-		} else {
-			parsedURL.Host = "localhost"
-		}
-	}
+// 	// Check if the hostname (excluding port) is a Docker service name
+// 	hostname := strings.Split(parsedURL.Host, ":")[0]
+// 	if isDockerName(hostname) {
+// 		// Modify the hostname to localhost, but keep the port if specified
+// 		port := strings.Split(parsedURL.Host, ":")[1]
+// 		if port != "" {
+// 			parsedURL.Host = "localhost:" + port
+// 		} else {
+// 			parsedURL.Host = "localhost"
+// 		}
+// 	}
 
-	return parsedURL.String()
-}
+// 	return parsedURL.String()
+// }
