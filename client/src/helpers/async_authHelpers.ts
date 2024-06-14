@@ -70,15 +70,18 @@ export const get_authenticatedUser = async (
 
     const response = await fetch(`${authServerUrl}/auth`, options);
 
-    console.log("get_authenticatedUser response: ", response);
-
     if (response.ok) {
+      console.log("get_authenticatedUser response: ok");
+
       const user = await response.json();
 
       return { user };
     } else if (preventRedirect) {
+      console.log("get_authenticatedUser preventRedirect triggered");
       return { user: undefined };
     } else {
+      console.log("get_authenticatedUser response NOT ok, starting new auth");
+
       const newAuthResponse = await fetch(
         `${authServerUrl}/auth/google`,
         options

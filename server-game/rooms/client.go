@@ -24,7 +24,7 @@ type authResponse struct {
 
 func authenticateClient(headers http.Header) (string, error) {
 	// Returns username as truthy value if user is authenticated
-	authURL := os.Getenv("AUTH_URL")
+	authURL := os.Getenv("AUTH_URL_INTERNAL")
 
 	if authURL == "" {
 		return "", fmt.Errorf("could not find authorization endpoint")
