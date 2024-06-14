@@ -91,6 +91,8 @@ export const Lobby = ({ gameSocketURL, user, room }: Props) => {
           (playerNumber === 1 && message?.playerOneState) ||
           message?.playerTwoState
         ) {
+          console.log("MESSAGE", message);
+
           setPlayerOneState(message?.playerOneState);
           setPlayerTwoState(message?.playerTwoState);
         }
