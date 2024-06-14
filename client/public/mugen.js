@@ -2837,22 +2837,38 @@ function i(r) {
         window.mugenSocket = new WebSocket(window.mugenSocketUrl);
 
         let reconnectTimeout;
+        let retryCount = 6;
+        const maxRetries = 3;
 
         const reconnect = () => {
           if (!window.disconnected) {
             return; // If not disconnected, no need for reconnection attempts
           }
 
-          console.log("Attempting to reconnect...");
+          if (retryCount >= maxRetries) {
+            console.log(
+              "Maximum number of retries reached. Connection failed."
+            );
+            return;
+          }
+
+          console.log(
+            `Attempting to reconnect (attempt ${
+              retryCount + 1
+            } of ${maxRetries})...`
+          );
+          retryCount++;
+
           reconnectTimeout = setTimeout(() => {
             window.mugenSocket = new WebSocket(yourWebSocketURL); // Reinitialize the WebSocket connection
-          }, 3000); // Retry after 3 seconds
+          }, 250); // Retry after 250ms
         };
 
         window.mugenSocket.onopen = () => {
           window.disconnected = false;
           console.log("WebSocket connection established.");
           clearTimeout(reconnectTimeout); // Clear any pending reconnection attempts upon successful connection
+          retryCount = 0; // Reset retry count
         };
 
         window.mugenSocket.onerror = (error) => {
