@@ -48,7 +48,7 @@ func NewAuth(baseURL string) {
 	Store = sessions.NewCookieStore([]byte(key))
 	Store.MaxAge(MaxAge)
 	Store.Options.Path = "/"
-	Store.Options.Domain = ".crabdance.com"
+	Store.Options.Domain = ".twilightparadox.com"
 	Store.Options.HttpOnly = true
 	Store.Options.Secure = false
 
