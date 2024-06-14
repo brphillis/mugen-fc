@@ -370,7 +370,7 @@ func (r *room) checkEmptyRoom() {
 	for {
 		time.Sleep(10 * time.Second)
 		// if room is empty for 60 seconds, we destroy the room
-		if !r.lastClientLeftAt.IsZero() && len(r.clients) == 0 && time.Since(r.lastClientLeftAt) > 20*time.Second {
+		if !r.lastClientLeftAt.IsZero() && len(r.clients) == 0 && time.Since(r.lastClientLeftAt) > 240*time.Second {
 			r.destroyRoom()
 			return
 		}
