@@ -2841,7 +2841,7 @@ function i(r) {
         const maxRetries = 3;
 
         const reconnect = () => {
-          if (!window.disconnected) {
+          if (window.disconnected) {
             return; // If not disconnected, no need for reconnection attempts
           }
 

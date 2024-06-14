@@ -86,6 +86,7 @@ export const Lobby = ({ gameSocketURL, user, room }: Props) => {
       webSocket.current.onmessage = (event) => {
         const message = JSON.parse(event.data);
 
+        // We should only update playerstate if the message is from game? or playerstate?
         if (
           (playerNumber === 1 && message?.playerOneState) ||
           message?.playerTwoState
