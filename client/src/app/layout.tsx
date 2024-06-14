@@ -17,7 +17,15 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { user, error } = await get_authenticatedUser(headers(), true);
+  let currentUser;
+
+  if (!currentUser) {
+    const { user, error } = await get_authenticatedUser(headers(), true);
+
+    if (user) {
+      currentUser = user;
+    }
+  }
 
   return (
     <html lang="en">
@@ -25,7 +33,7 @@ export default async function RootLayout({
         <div className="drawer !max-h-[100vh] !max-w-[100vw]">
           <input id="my-drawer-3" type="checkbox" className="drawer-toggle" />
           <div className="drawer-content flex flex-col !max-w-screen overflow-x-hidden !max-w-screen min-h-[100dvh] bg-base-600">
-            <NavBar user={user} />
+            <NavBar user={currentUser} />
             {children}
           </div>
           <Drawer />
