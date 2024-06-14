@@ -93,7 +93,7 @@ func newRoom(roomID string, rm *roomManager, roomCreateData RoomCreateData) *roo
 	r.gameState.Time = 120
 
 	go r.startBroadcast()
-	go r.checkEmptyRoom()
+	// go r.checkEmptyRoom()
 
 	return r
 }
@@ -403,5 +403,5 @@ func (r *room) destroyRoom() {
 	}
 
 	delete(r.roomManager.rooms, r.Id)
-	log.Printf("room instance has been destroyed due to inactivity")
+	log.Printf("room instance has been destroyed due to inactivity, room name: ", r.Name)
 }
