@@ -27,7 +27,7 @@ func authenticateClient(headers http.Header) (string, error) {
 	authURL := os.Getenv("AUTH_URL_INTERNAL")
 
 	if authURL == "" {
-		return "", fmt.Errorf("could not find authorization endpoint")
+		log.Println("could not find auth_url_internal")
 	}
 
 	req, err := http.NewRequest("GET", authURL+"/auth", nil)

@@ -45,6 +45,11 @@ spec:
                 secretKeyRef:
                   name: server-secrets
                   key: GAMESERVER_URL
+            - name: GAMESERVER_SOCKET_URL
+              valueFrom:
+                secretKeyRef:
+                  name: server-secrets
+                  key: GAMESERVER_SOCKET_URL
           resources: {}
           terminationMessagePath: /dev/termination-log
           terminationMessagePolicy: File

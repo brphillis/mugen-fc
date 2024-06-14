@@ -35,9 +35,23 @@ func NewAuth(baseURL string) {
 	}
 
 	googleClientId := os.Getenv("GOOGLE_CLIENT_ID")
+
+	if googleClientId == "" {
+		log.Println("could not find google_client_id")
+	}
+
 	googleClientSecret := os.Getenv("GOOGLE_CLIENT_SECRET")
 
+	if googleClientSecret == "" {
+		log.Println("could not find google_client_secret")
+	}
+
 	authURL := os.Getenv("AUTH_URL")
+
+	if authURL == "" {
+		log.Println("could not find auth_url")
+	}
+
 	// appEnv := os.Getenv("APP_ENV")
 
 	// // returns localhost if not valid url, need this for local as cant use docker named network name for google auth whitelist
@@ -122,6 +136,10 @@ func GetAuthCallbackFunction(w http.ResponseWriter, r *http.Request) {
 	}
 
 	clientUrl := os.Getenv("CLIENT_URL")
+
+	if clientUrl == "" {
+		log.Println("could not find client_url")
+	}
 
 	fmt.Println("session created successfully: ", session)
 
