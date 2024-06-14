@@ -2853,7 +2853,7 @@ function i(r) {
           }
 
           console.log(
-            `Attempting to reconnect (attempt ${
+            `Attempting to reconnect (attempt  ${
               retryCount + 1
             } of ${maxRetries})...`
           );
