@@ -115,7 +115,12 @@ func (r *room) run() {
 		case client := <-r.leave:
 
 			if !r.PlayerOneState.Ready || !r.PlayerTwoState.Ready && !r.gameState.Initiated {
-				r.handlePlayerLeaveLobby(client)
+
+				// wait 2 seconds and send a message, will trigger message fail testing loop in client.write which triggers handlePlayerLeaveLobby()
+				time.Sleep(2000 * time.Second)
+
+				r.sendGameState(client)
+
 			}
 
 			delete(r.clients, client)
