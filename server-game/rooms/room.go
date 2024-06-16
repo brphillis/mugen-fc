@@ -115,12 +115,11 @@ func (r *room) run() {
 		case client := <-r.leave:
 
 			if !r.PlayerOneState.Ready || !r.PlayerTwoState.Ready && !r.gameState.Initiated {
-
-				// wait 2 seconds and send a message, will trigger message fail testing loop in client.write which triggers handlePlayerLeaveLobby()
-				time.Sleep(2000 * time.Second)
-
-				r.sendGameState(client)
-
+				// if user does not rejoin the room after 15 seconds we will reset the playerstate
+				// in the room so someone else can join
+				time.AfterFunc(15*time.Second, func() {
+					r.handlePlayerLeaveRoom(client)
+				})
 			}
 
 			delete(r.clients, client)
@@ -346,28 +345,45 @@ func (r *room) declareWinner(winnerPlayerNumber int) {
 	})
 }
 
-func (r *room) handlePlayerLeaveLobby(client *client) {
+func (r *room) handlePlayerLeaveRoom(client *client) {
 	authenticatedUser, err := authenticateClient(client.headers)
 	if err != nil {
 		log.Printf("authentication failed: %v", err)
 	}
 
-	if r.PlayerOneState.User == authenticatedUser {
-		r.PlayerOneState.User = ""
-		r.PlayerOneState.Ready = false
+	userStillInRoom := false
+	for c := range r.clients {
 
-		for client := range r.clients {
-			r.sendGameState(client)
+		currUser, err := authenticateClient(c.headers)
+		if err != nil {
+			log.Printf("nf: %v", err)
+		}
+		if currUser == authenticatedUser {
+			userStillInRoom = true
+			break
 		}
 	}
 
-	if r.PlayerTwoState.User == authenticatedUser {
-		r.PlayerTwoState.User = ""
-		r.PlayerTwoState.Ready = false
+	if !userStillInRoom {
 
-		for client := range r.clients {
-			r.sendGameState(client)
+		if r.PlayerOneState.User == authenticatedUser {
+			r.PlayerOneState.User = ""
+			r.PlayerOneState.Ready = false
+
+			for client := range r.clients {
+				r.sendGameState(client)
+			}
 		}
+
+		if r.PlayerTwoState.User == authenticatedUser {
+			r.PlayerTwoState.User = ""
+			r.PlayerTwoState.Ready = false
+
+			for client := range r.clients {
+				r.sendGameState(client)
+			}
+		}
+
 	}
 }
 

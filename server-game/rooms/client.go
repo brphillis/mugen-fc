@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/gorilla/websocket"
 )
@@ -241,20 +240,9 @@ func (c *client) read(r *room) {
 func (c *client) write() {
 	defer c.socket.Close()
 	for msg := range c.send {
-		for i := 1; i <= 10; i++ {
-			err := c.socket.WriteMessage(websocket.TextMessage, msg)
-			if err != nil {
-				log.Printf("Error sending message, attempt %d: %v", i, err)
-				time.Sleep(500 * time.Second) // wait half a second before retrying
-			} else {
-				break // exit the retry loop if the message was sent successfully
-			}
-
-			if i == 10 {
-				log.Println("Failed to send message after 10 attempts, removing client from lobby")
-				c.room.handlePlayerLeaveLobby(c)
-				return
-			}
+		err := c.socket.WriteMessage(websocket.TextMessage, msg)
+		if err != nil {
+			return
 		}
 	}
 }
