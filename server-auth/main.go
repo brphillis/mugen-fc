@@ -37,7 +37,7 @@ func returnBaseUrl() string {
 	currentEnv := os.Getenv("APP_ENV")
 
 	host := os.Getenv("HOST")
-	if host == "" || currentEnv == "local" {
+	if host == "" || currentEnv == "local" || currentEnv == "localcontainer" {
 		host = "0.0.0.0"
 	}
 

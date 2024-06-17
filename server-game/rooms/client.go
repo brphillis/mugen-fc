@@ -28,7 +28,7 @@ func authenticateClient(headers http.Header) (string, error) {
 	authURL := os.Getenv("AUTH_URL_INTERNAL")
 	appEnv := os.Getenv("APP_ENV")
 
-	if appEnv == "local" {
+	if appEnv == "local" || appEnv == "localcontainer" {
 		authURL = os.Getenv("AUTH_URL")
 	}
 

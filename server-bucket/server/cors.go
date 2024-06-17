@@ -37,7 +37,7 @@ func isValidOrigin(origin string) bool {
 
 	appEnv := os.Getenv("APP_ENV")
 
-	if appEnv == "local" {
+	if appEnv == "local" || appEnv == "localcontainer" {
 		allowedOrigins = append(allowedOrigins, "http://localhost:3000")
 	}
 

@@ -57,6 +57,11 @@ spec:
                 secretKeyRef:
                   name: server-secrets
                   key: GOOGLE_CLIENT_SECRET
+            - name: DOMAIN
+              valueFrom:
+                secretKeyRef:
+                  name: server-secrets
+                  key: DOMAIN
           readinessProbe:
             httpGet:
               path: /health
