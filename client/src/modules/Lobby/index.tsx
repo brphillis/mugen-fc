@@ -66,7 +66,9 @@ export const Lobby = ({ gameSocketURL, user, room }: Props) => {
       gameData.playerTwoState.name = characterName;
     }
 
-    webSocket.current!.send(JSON.stringify(gameData));
+    if (webSocket.current && window.mugenSocket.readyState === WebSocket.OPEN) {
+      webSocket.current.send(JSON.stringify(gameData));
+    }
   };
 
   useEffect(() => {
@@ -115,12 +117,11 @@ export const Lobby = ({ gameSocketURL, user, room }: Props) => {
     const reconnect = () => {
       if (retries < maxRetries && isMounted) {
         retries++;
-        console.log(
-          `Attempting to reconnect (attempt ${retries} of ${maxRetries})...`
-        );
-        reconnectTimeout = setTimeout(connectWebSocket, 250); // Retry after 500ms
+        reconnectTimeout = setTimeout(connectWebSocket, 250);
       } else {
-        console.log("Maximum number of retries reached. Connection failed.");
+        console.log(
+          "Maximum number of reconnection retries reached. Connection failed."
+        );
       }
     };
 

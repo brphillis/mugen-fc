@@ -2691,7 +2691,9 @@ function i(r) {
             playerData.PlayerTwoState = characterStateData;
           }
 
-          window.mugenSocket.send(JSON.stringify(playerData));
+          if (window.mugenSocket.readyState === WebSocket.OPEN) {
+            window.mugenSocket.send(JSON.stringify(playerData));
+          }
         }
       }
 
@@ -2710,7 +2712,9 @@ function i(r) {
           gameData.PlayerTwoState.Damage = damage;
         }
 
-        window.mugenSocket.send(JSON.stringify(gameData));
+        if (window.mugenSocket.readyState === WebSocket.OPEN) {
+          window.mugenSocket.send(JSON.stringify(gameData));
+        }
       }
 
       handleSyncOpponentPlayer(data) {
@@ -2810,7 +2814,9 @@ function i(r) {
           playerData.PlayerTwoState = characterStateData;
         }
 
-        window.mugenSocket.send(JSON.stringify(playerData));
+        if (window.mugenSocket.readyState === WebSocket.OPEN) {
+          window.mugenSocket.send(JSON.stringify(playerData));
+        }
       }
 
       readyPlayer() {
@@ -2830,7 +2836,9 @@ function i(r) {
           playerData.PlayerTwoState = characterStateData;
         }
 
-        window.mugenSocket.send(JSON.stringify(playerData));
+        if (window.mugenSocket.readyState === WebSocket.OPEN) {
+          window.mugenSocket.send(JSON.stringify(playerData));
+        }
       }
 
       setSocketEvents() {
@@ -2842,22 +2850,17 @@ function i(r) {
 
         const reconnect = () => {
           if (window.disconnected) {
-            return; // If not disconnected, no need for reconnection attempts
+            return;
           }
 
           if (retryCount >= maxRetries) {
             console.log(
-              "Maximum number of retries reached. Connection failed."
+              "Maximum number of reconnection retries reached. Connection failed."
             );
             window.disconnected = true;
             return;
           }
 
-          console.log(
-            `Attempting to reconnect (attempt  ${
-              retryCount + 1
-            } of ${maxRetries})...`
-          );
           retryCount++;
 
           reconnectTimeout = setTimeout(() => {
@@ -2868,8 +2871,8 @@ function i(r) {
         window.mugenSocket.onopen = () => {
           window.disconnected = false;
           console.log("WebSocket connection established.");
-          clearTimeout(reconnectTimeout); // Clear any pending reconnection attempts upon successful connection
-          retryCount = 0; // Reset retry count
+          clearTimeout(reconnectTimeout);
+          retryCount = 0;
         };
 
         window.mugenSocket.onerror = (error) => {
