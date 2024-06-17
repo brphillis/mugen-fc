@@ -2839,17 +2839,18 @@ function i(r) {
         window.mugenSocket = new WebSocket(window.mugenSocketUrl);
 
         let reconnectTimeout;
-        let retryCount = 6;
-        const maxRetries = 3;
+        let retryCount = 0;
+        const maxRetries = 12;
 
         const reconnect = () => {
           if (window.disconnected) {
+            console.log("connection is disconnected.");
             return;
           }
 
           if (retryCount >= maxRetries) {
             console.log(
-              "Maximum number of reconnection retries reached. Connection failed."
+              "maximum number of reconnection retries reached. connection failed."
             );
             window.disconnected = true;
             return;
@@ -2870,7 +2871,6 @@ function i(r) {
         };
 
         window.mugenSocket.onerror = (error) => {
-          window.disconnected = true;
           console.error("WebSocket error:", error);
           reconnect();
         };
