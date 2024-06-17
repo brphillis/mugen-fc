@@ -2837,12 +2837,18 @@ function i(r) {
 
       setSocketEvents() {
         window.mugenSocket = new WebSocket(window.mugenSocketUrl);
+        window.mugenSocket.onopen = onWebSocketOpen;
+        window.mugenSocket.onerror = onWebSocketError;
+        window.mugenSocket.onclose = onWebSocketClose;
+        window.mugenSocket.onmessage = onWebSocketMessage;
 
         let reconnectTimeout;
         let retryCount = 0;
         const maxRetries = 12;
 
-        const reconnect = () => {
+        function reconnect() {
+          console.log("reconnect function triggered");
+
           if (window.disconnected) {
             console.log("connection is disconnected.");
             return;
@@ -2857,30 +2863,33 @@ function i(r) {
           }
 
           retryCount++;
-
           reconnectTimeout = setTimeout(() => {
             window.mugenSocket = new WebSocket(window.mugenSocketUrl);
+            window.mugenSocket.onopen = onWebSocketOpen;
+            window.mugenSocket.onerror = onWebSocketError;
+            window.mugenSocket.onclose = onWebSocketClose;
+            window.mugenSocket.onmessage = onWebSocketMessage;
           }, 250);
-        };
+        }
 
-        window.mugenSocket.onopen = () => {
+        function onWebSocketOpen() {
           window.disconnected = false;
           console.log("WebSocket connection established.");
           clearTimeout(reconnectTimeout);
           retryCount = 0;
-        };
+        }
 
-        window.mugenSocket.onerror = (error) => {
+        function onWebSocketError(error) {
           console.error("WebSocket error:", error);
           reconnect();
-        };
+        }
 
-        window.mugenSocket.onclose = () => {
+        function onWebSocketClose() {
           console.log("WebSocket connection closed.");
           reconnect();
-        };
+        }
 
-        window.mugenSocket.onmessage = (event) => {
+        function onWebSocketMessage(event) {
           const data = JSON.parse(event.data);
 
           const handleSyncGameState = (currentData) => {
@@ -2913,7 +2922,7 @@ function i(r) {
 
             handleSyncGameState(data);
           }
-        };
+        }
       }
 
       setDOMEvents() {
