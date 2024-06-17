@@ -2691,9 +2691,7 @@ function i(r) {
             playerData.PlayerTwoState = characterStateData;
           }
 
-          if (window.mugenSocket.readyState === WebSocket.OPEN) {
-            window.mugenSocket.send(JSON.stringify(playerData));
-          }
+          window.mugenSocket.send(JSON.stringify(playerData));
         }
       }
 
@@ -2814,9 +2812,7 @@ function i(r) {
           playerData.PlayerTwoState = characterStateData;
         }
 
-        if (window.mugenSocket.readyState === WebSocket.OPEN) {
-          window.mugenSocket.send(JSON.stringify(playerData));
-        }
+        window.mugenSocket.send(JSON.stringify(playerData));
       }
 
       readyPlayer() {
@@ -2836,9 +2832,7 @@ function i(r) {
           playerData.PlayerTwoState = characterStateData;
         }
 
-        if (window.mugenSocket.readyState === WebSocket.OPEN) {
-          window.mugenSocket.send(JSON.stringify(playerData));
-        }
+        window.mugenSocket.send(JSON.stringify(playerData));
       }
 
       setSocketEvents() {
