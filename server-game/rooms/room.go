@@ -22,9 +22,9 @@ type message struct {
 type room struct {
 	Id               string `json:"id,omitempty"`
 	roomManager      *roomManager
-	clients          map[*client]bool
-	join             chan *client
-	leave            chan *client
+	clients          map[*Client]*Client
+	join             chan *Client
+	leave            chan *Client
 	forward          chan []byte
 	stopRound        chan struct{}
 	stopRoom         chan struct{}
@@ -73,9 +73,9 @@ func newRoom(roomID string, rm *roomManager, roomCreateData RoomCreateData) *roo
 	r := &room{
 		Id:          roomID,
 		Name:        roomCreateData.Name,
-		clients:     make(map[*client]bool),
-		join:        make(chan *client),
-		leave:       make(chan *client),
+		clients:     make(map[*Client]*Client),
+		join:        make(chan *Client),
+		leave:       make(chan *Client),
 		forward:     make(chan []byte),
 		roomManager: rm,
 		stopRoom:    make(chan struct{}),
@@ -105,8 +105,12 @@ func (r *room) run() {
 			fmt.Println("room has been stopped")
 			return
 		case client := <-r.join:
-			r.clients[client] = true
-			r.sendGameState(client)
+
+			r.clients[client] = client
+
+			for client := range r.clients {
+				r.sendGameState(client)
+			}
 
 			if len(r.clients) >= 1 {
 				r.lastClientLeftAt = time.Time{}
@@ -114,25 +118,37 @@ func (r *room) run() {
 
 		case client := <-r.leave:
 
+			r.removeClient(client)
+
 			if !r.PlayerOneState.Ready || !r.PlayerTwoState.Ready && !r.gameState.Initiated {
-				// if user does not rejoin the room after 15 seconds we will reset the playerstate
-				// in the room so someone else can join
-				time.AfterFunc(15*time.Second, func() {
+				time.AfterFunc(6*time.Second, func() {
 					r.handlePlayerLeaveRoom(client)
 				})
 			}
 
-			delete(r.clients, client)
-			close(client.send)
-
 			if len(r.clients) == 0 {
 				r.lastClientLeftAt = time.Now()
 			}
+
 		case msg := <-r.forward:
 			for client := range r.clients {
 				client.send <- msg
 			}
 		}
+	}
+}
+
+func (r *room) removeClient(client *Client) {
+	// Locking the room's state to prevent race conditions if using goroutines
+	r.structLock.Lock()
+	defer r.structLock.Unlock()
+
+	// Check if the client exists before attempting to remove
+	if _, exists := r.clients[client]; exists {
+		delete(r.clients, client)
+		close(client.send)
+	} else {
+		fmt.Println("Client not found in the room:", client)
 	}
 }
 
@@ -155,11 +171,19 @@ func (r *room) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 		log.Fatal("servehttp ftl error: ", err)
 		return
 	}
-	client := &client{
-		socket:  socket,
-		send:    make(chan []byte, messageBufferSize),
-		room:    r,
-		headers: req.Header,
+
+	authenticatedUser, err := authenticateClient(req.Header)
+	if err != nil {
+		log.Printf("Authentication failed: %v", err)
+		return
+	}
+
+	client := &Client{
+		userName: authenticatedUser,
+		socket:   socket,
+		send:     make(chan []byte, messageBufferSize),
+		room:     r,
+		headers:  req.Header,
 	}
 	r.join <- client
 	defer func() {
@@ -171,7 +195,7 @@ func (r *room) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 	client.read(r)
 }
 
-func (r *room) sendGameState(client *client) {
+func (r *room) sendGameState(client *Client) {
 	msg, err := json.Marshal(message{
 		Action:         "game_state",
 		PlayerOneState: r.PlayerOneState,
@@ -345,20 +369,18 @@ func (r *room) declareWinner(winnerPlayerNumber int) {
 	})
 }
 
-func (r *room) handlePlayerLeaveRoom(client *client) {
+func (r *room) handlePlayerLeaveRoom(client *Client) {
+
 	authenticatedUser, err := authenticateClient(client.headers)
 	if err != nil {
-		log.Printf("authentication failed: %v", err)
+		log.Println("authentication failed: ", err)
+		return
 	}
 
 	userStillInRoom := false
-	for c := range r.clients {
 
-		currUser, err := authenticateClient(c.headers)
-		if err != nil {
-			log.Printf("nf: %v", err)
-		}
-		if currUser == authenticatedUser {
+	for c := range r.clients {
+		if c.userName == authenticatedUser {
 			userStillInRoom = true
 			break
 		}
@@ -367,6 +389,7 @@ func (r *room) handlePlayerLeaveRoom(client *client) {
 	if !userStillInRoom {
 
 		if r.PlayerOneState.User == authenticatedUser {
+
 			r.PlayerOneState.User = ""
 			r.PlayerOneState.Ready = false
 
@@ -376,6 +399,7 @@ func (r *room) handlePlayerLeaveRoom(client *client) {
 		}
 
 		if r.PlayerTwoState.User == authenticatedUser {
+
 			r.PlayerTwoState.User = ""
 			r.PlayerTwoState.Ready = false
 
@@ -387,42 +411,42 @@ func (r *room) handlePlayerLeaveRoom(client *client) {
 	}
 }
 
-func (r *room) checkEmptyRoom() {
-	for {
-		time.Sleep(10 * time.Second)
-		// if room is empty for 60 seconds, we destroy the room
-		if !r.lastClientLeftAt.IsZero() && len(r.clients) == 0 && time.Since(r.lastClientLeftAt) > 240*time.Second {
-			r.destroyRoom()
-			return
-		}
-	}
-}
+// func (r *room) checkEmptyRoom() {
+// 	for {
+// 		time.Sleep(10 * time.Second)
+// 		// if room is empty for 60 seconds, we destroy the room
+// 		if !r.lastClientLeftAt.IsZero() && len(r.clients) == 0 && time.Since(r.lastClientLeftAt) > 240*time.Second {
+// 			r.destroyRoom()
+// 			return
+// 		}
+// 	}
+// }
 
-func (r *room) destroyRoom() {
-	r.roomManager.lock.Lock()
-	defer r.roomManager.lock.Unlock()
+// func (r *room) destroyRoom() {
+// 	r.roomManager.lock.Lock()
+// 	defer r.roomManager.lock.Unlock()
 
-	if r.stopRoom != nil {
-		close(r.stopRoom)
-		r.stopRoom = nil // Set the channel to nil after closing
-	}
-	if r.join != nil {
-		close(r.join)
-		r.join = nil // Set the channel to nil after closing
-	}
-	if r.leave != nil {
-		close(r.leave)
-		r.leave = nil // Set the channel to nil after closing
-	}
-	if r.forward != nil {
-		close(r.forward)
-		r.forward = nil // Set the channel to nil after closing
-	}
-	if r.stopRound != nil {
-		close(r.stopRound)
-		r.stopRound = nil // Set the channel to nil after closing
-	}
+// 	if r.stopRoom != nil {
+// 		close(r.stopRoom)
+// 		r.stopRoom = nil // Set the channel to nil after closing
+// 	}
+// 	if r.join != nil {
+// 		close(r.join)
+// 		r.join = nil // Set the channel to nil after closing
+// 	}
+// 	if r.leave != nil {
+// 		close(r.leave)
+// 		r.leave = nil // Set the channel to nil after closing
+// 	}
+// 	if r.forward != nil {
+// 		close(r.forward)
+// 		r.forward = nil // Set the channel to nil after closing
+// 	}
+// 	if r.stopRound != nil {
+// 		close(r.stopRound)
+// 		r.stopRound = nil // Set the channel to nil after closing
+// 	}
 
-	delete(r.roomManager.rooms, r.Id)
-	log.Printf("room instance has been destroyed due to inactivity, room name: ", r.Name)
-}
+// 	delete(r.roomManager.rooms, r.Id)
+// 	log.Printf("room instance has been destroyed due to inactivity, room name: ", r.Name)
+// }

@@ -167,6 +167,7 @@ func (rm *roomManager) JoinRoom(w http.ResponseWriter, r *http.Request) {
 		if room.PlayerOneState.User == "" {
 			room.PlayerOneState.User = authenticatedUser
 		} else if room.PlayerTwoState.User == "" {
+
 			room.PlayerTwoState.User = authenticatedUser
 		}
 

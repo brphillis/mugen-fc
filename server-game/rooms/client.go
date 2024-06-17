@@ -10,11 +10,12 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-type client struct {
-	socket  *websocket.Conn
-	send    chan []byte
-	room    *room
-	headers http.Header
+type Client struct {
+	userName string
+	socket   *websocket.Conn
+	send     chan []byte
+	room     *room
+	headers  http.Header
 }
 
 type authResponse struct {
@@ -25,9 +26,14 @@ type authResponse struct {
 func authenticateClient(headers http.Header) (string, error) {
 	// Returns username as truthy value if user is authenticated
 	authURL := os.Getenv("AUTH_URL_INTERNAL")
+	appEnv := os.Getenv("APP_ENV")
+
+	if appEnv == "local" {
+		authURL = os.Getenv("AUTH_URL")
+	}
 
 	if authURL == "" {
-		log.Println("could not find auth_url_internal")
+		log.Println("could not find auth url for authenticateclient func")
 	}
 
 	req, err := http.NewRequest("GET", authURL+"/auth", nil)
@@ -64,7 +70,7 @@ func authenticateClient(headers http.Header) (string, error) {
 	return authResp.UserName, nil
 }
 
-func (c *client) read(r *room) {
+func (c *Client) read(r *room) {
 	defer c.socket.Close()
 	for {
 		_, msg, err := c.socket.ReadMessage()
@@ -237,7 +243,7 @@ func (c *client) read(r *room) {
 	}
 }
 
-func (c *client) write() {
+func (c *Client) write() {
 	defer c.socket.Close()
 	for msg := range c.send {
 		err := c.socket.WriteMessage(websocket.TextMessage, msg)

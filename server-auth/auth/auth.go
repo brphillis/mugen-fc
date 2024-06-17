@@ -103,8 +103,6 @@ func GetAuthCallbackFunction(w http.ResponseWriter, r *http.Request) {
 
 	r = r.WithContext(context.WithValue(r.Context(), "provider", provider))
 
-	fmt.Println("provider is: ", provider)
-
 	user, err := gothic.CompleteUserAuth(w, r)
 	if err != nil {
 		// Log the error and handle re-authentication
@@ -141,8 +139,6 @@ func GetAuthCallbackFunction(w http.ResponseWriter, r *http.Request) {
 		log.Println("could not find client_url")
 	}
 
-	fmt.Println("session created successfully: ", session)
-
 	// http.Redirect(w, r, returnLocalHostIfNotValidUrlOrIp(clientUrl), http.StatusSeeOther)
 	http.Redirect(w, r, clientUrl, http.StatusSeeOther)
 }
@@ -150,7 +146,6 @@ func GetAuthCallbackFunction(w http.ResponseWriter, r *http.Request) {
 func GetAuthenticatedUserSession(w http.ResponseWriter, r *http.Request) {
 	session, err := Store.Get(r, "session-name")
 	if err != nil {
-		fmt.Println("err: 9000 - get session error is: ", err)
 		http.Error(w, "user not authenticated", http.StatusUnauthorized)
 		return
 	}
@@ -158,7 +153,6 @@ func GetAuthenticatedUserSession(w http.ResponseWriter, r *http.Request) {
 	userInterface, ok := session.Values["user"]
 	if !ok {
 		// User data not found in the session.
-		fmt.Println("err: 56000 - there was no user found in session")
 		http.Error(w, "no user found in session", http.StatusUnauthorized)
 		return
 	}
@@ -166,7 +160,6 @@ func GetAuthenticatedUserSession(w http.ResponseWriter, r *http.Request) {
 	user, ok := userInterface.(goth.User)
 	if !ok {
 		// User data is not of type goth.User.
-		fmt.Println("err: 3022000 - user found in session is of wrong type")
 		http.Error(w, "user found in session is of incorrect type", http.StatusUnauthorized)
 		return
 	}

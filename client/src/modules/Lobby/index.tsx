@@ -74,13 +74,14 @@ export const Lobby = ({ gameSocketURL, user, room }: Props) => {
     let retries = 0;
     const maxRetries = 6;
     let reconnectTimeout: NodeJS.Timeout;
+    let isMounted = true;
 
     const connectWebSocket = () => {
       webSocket.current = new WebSocket(url);
 
       webSocket.current.onopen = () => {
         console.log("WebSocket connection established");
-        retries = 0; // Reset retry count upon successful connection
+        retries = 0;
       };
 
       webSocket.current.onmessage = (event) => {
@@ -88,11 +89,9 @@ export const Lobby = ({ gameSocketURL, user, room }: Props) => {
 
         // We should only update playerstate if the message is from game? or playerstate?
         if (
-          (playerNumber === 1 && message?.playerOneState) ||
-          message?.playerTwoState
+          (isMounted && playerNumber === 1 && message?.playerOneState) ||
+          (isMounted && message?.playerTwoState)
         ) {
-          console.log("MESSAGE", message);
-
           setPlayerOneState(message?.playerOneState);
           setPlayerTwoState(message?.playerTwoState);
         }
@@ -100,17 +99,21 @@ export const Lobby = ({ gameSocketURL, user, room }: Props) => {
 
       webSocket.current.onerror = (error) => {
         console.error("WebSocket error", error);
-        reconnect();
+        if (isMounted) {
+          reconnect();
+        }
       };
 
       webSocket.current.onclose = () => {
         console.log("WebSocket connection closed");
-        reconnect();
+        if (isMounted) {
+          reconnect();
+        }
       };
     };
 
     const reconnect = () => {
-      if (retries < maxRetries) {
+      if (retries < maxRetries && isMounted) {
         retries++;
         console.log(
           `Attempting to reconnect (attempt ${retries} of ${maxRetries})...`
@@ -125,6 +128,7 @@ export const Lobby = ({ gameSocketURL, user, room }: Props) => {
 
     return () => {
       clearTimeout(reconnectTimeout);
+      isMounted = false;
       if (webSocket.current) {
         webSocket.current.close();
       }
