@@ -66,7 +66,7 @@ export const Lobby = ({ gameSocketURL, user, room }: Props) => {
       gameData.playerTwoState.name = characterName;
     }
 
-    if (webSocket.current && window.mugenSocket.readyState === WebSocket.OPEN) {
+    if (webSocket.current) {
       webSocket.current.send(JSON.stringify(gameData));
     }
   };
