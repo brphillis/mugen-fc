@@ -148,7 +148,7 @@ func (r *room) removeClient(client *Client) {
 		delete(r.clients, client)
 		close(client.send)
 	} else {
-		fmt.Println("Client not found in the room:", client)
+		fmt.Println("Client not found in the room: ", client)
 	}
 }
 
@@ -174,7 +174,7 @@ func (r *room) ServeHTTP(w http.ResponseWriter, req *http.Request) {
 
 	authenticatedUser, err := authenticateClient(req.Header)
 	if err != nil {
-		log.Printf("Authentication failed: %v", err)
+		log.Printf("authentication failed: %v", err)
 		return
 	}
 
@@ -203,7 +203,7 @@ func (r *room) sendGameState(client *Client) {
 		GameState:      r.gameState,
 	})
 	if err != nil {
-		log.Println("error marshaling initial game state:", err)
+		log.Println("error marshaling initial game state: ", err)
 		return
 	}
 	client.send <- msg
@@ -234,7 +234,7 @@ func (r *room) startBroadcast() {
 				})
 
 				if err != nil {
-					log.Println("error marshaling game state:", err)
+					log.Println("error marshaling game state: ", err)
 					return
 				}
 
@@ -300,7 +300,7 @@ func (r *room) initiateClientRound() {
 	})
 
 	if err != nil {
-		log.Println("error marshaling start round:", err)
+		log.Println("error marshaling start round: ", err)
 		return
 	}
 
@@ -333,7 +333,7 @@ func (r *room) finalizeRound() {
 	})
 
 	if err != nil {
-		log.Println("Error marshaling game state:", err)
+		log.Println("error marshaling game state: ", err)
 		return
 	}
 
@@ -356,7 +356,7 @@ func (r *room) declareWinner(winnerPlayerNumber int) {
 	})
 
 	if err != nil {
-		log.Println("error marshaling game state:", err)
+		log.Println("error marshaling game state: ", err)
 		return
 	}
 

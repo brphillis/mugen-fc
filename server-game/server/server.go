@@ -32,7 +32,7 @@ func (s *Server) Run() {
 
 	// Run the server in a goroutine
 	go func() {
-		log.Println("Starting web server on", s.addr)
+		log.Println("starting web server on: ", s.addr)
 		if err := s.server.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("ListenAndServe: %v", err)
 		}
@@ -44,7 +44,7 @@ func (s *Server) Run() {
 			time.Sleep(1 * time.Second)
 			_, err := net.Dial("tcp", s.addr)
 			if err == nil {
-				log.Println("Running on:", s.addr)
+				log.Println("running on: ", s.addr)
 				return
 			}
 		}
@@ -58,9 +58,9 @@ func (s *Server) Run() {
 	defer cancel()
 
 	// Shutdown the server
-	log.Println("Shutting down the server...")
+	log.Println("shutting down the server...")
 	if err := s.server.Shutdown(ctx); err != nil {
-		log.Fatalf("Server Shutdown Failed:%+v", err)
+		log.Fatalf("server shutdown failed: %+v", err)
 	}
-	log.Println("Server exited properly")
+	log.Println("server exited properly")
 }

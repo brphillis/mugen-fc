@@ -23,8 +23,8 @@ type authResponse struct {
 	Email    string `json:"email"`
 }
 
+// returns username of authenticated client, also can be used as a truthy value
 func authenticateClient(headers http.Header) (string, error) {
-	// Returns username as truthy value if user is authenticated
 	authURL := os.Getenv("AUTH_URL_INTERNAL")
 	appEnv := os.Getenv("APP_ENV")
 
@@ -41,14 +41,14 @@ func authenticateClient(headers http.Header) (string, error) {
 		return "", err
 	}
 
-	// Copy headers from the client to the new request
+	// bridge headers
 	for key, values := range headers {
 		for _, value := range values {
 			req.Header.Add(key, value)
 		}
 	}
 
-	// Send the request using an HTTP client
+	// send the request using an HTTP client
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -56,7 +56,7 @@ func authenticateClient(headers http.Header) (string, error) {
 	}
 	defer resp.Body.Close()
 
-	// Check if authentication is successful
+	// check if authentication is successful
 	if resp.StatusCode != http.StatusOK {
 		return "", fmt.Errorf("authentication failed with status: %d", resp.StatusCode)
 	}
@@ -80,7 +80,7 @@ func (c *Client) read(r *room) {
 
 		var messageData message
 		if err := json.Unmarshal(msg, &messageData); err != nil {
-			log.Println("Error parsing JSON:", err)
+			log.Println("error parsing JSON:", err)
 			continue
 		}
 
@@ -89,7 +89,7 @@ func (c *Client) read(r *room) {
 		case "game_state":
 			r.structLock.Lock()
 
-			// Player One
+			// player One
 			if messageData.PlayerOneState.ActionNumber != 0 {
 				r.PlayerOneState.ActionNumber = messageData.PlayerOneState.ActionNumber
 			} else {
@@ -110,7 +110,7 @@ func (c *Client) read(r *room) {
 				r.PlayerOneState.Name = messageData.PlayerOneState.Name
 			}
 
-			// Player Two
+			// player Two
 			if messageData.PlayerTwoState.ActionNumber != 0 {
 				r.PlayerTwoState.ActionNumber = messageData.PlayerTwoState.ActionNumber
 			} else {
@@ -151,7 +151,7 @@ func (c *Client) read(r *room) {
 
 			authenticatedUser, err := authenticateClient(c.headers)
 			if err != nil {
-				log.Printf("Authentication failed: %v", err)
+				log.Printf("authentication failed: %v", err)
 				return
 			}
 
@@ -175,7 +175,7 @@ func (c *Client) read(r *room) {
 
 			authenticatedUser, err := authenticateClient(c.headers)
 			if err != nil {
-				log.Printf("Authentication failed: %v", err)
+				log.Printf("authentication failed: %v", err)
 				return
 			}
 
@@ -207,7 +207,7 @@ func (c *Client) read(r *room) {
 		case "player_ready":
 			authenticatedUser, err := authenticateClient(c.headers)
 			if err != nil {
-				log.Printf("Authentication failed: %v", err)
+				log.Printf("authentication failed: %v", err)
 				return
 			}
 

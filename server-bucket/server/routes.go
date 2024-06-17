@@ -29,36 +29,37 @@ func (s *Server) RegisterRoutes() http.Handler {
 }
 
 func GetGameCharacters(w http.ResponseWriter, r *http.Request) {
-	// Extract the character name from the query parameters
+
+	// extract the character name from the query parameters
 	playerOneCharacterName := r.URL.Query().Get("playerOne")
 	if playerOneCharacterName == "" {
-		http.Error(w, "P1 Character name is required", http.StatusBadRequest)
+		http.Error(w, "P1 character name is required", http.StatusBadRequest)
 		return
 	}
 
 	playerTwoCharacterName := r.URL.Query().Get("playerTwo")
 	if playerTwoCharacterName == "" {
-		http.Error(w, "P2 Character name is required", http.StatusBadRequest)
+		http.Error(w, "P2 character name is required", http.StatusBadRequest)
 		return
 	}
 
 	ctx := context.Background()
 	client, err := storage.NewClient(ctx)
 	if err != nil {
-		http.Error(w, "Failed to create client", http.StatusInternalServerError)
+		http.Error(w, "failed to create client", http.StatusInternalServerError)
 		return
 	}
 	defer client.Close()
 
 	bucketName := "mugen-fc"
 
-	// Helper function to get character file content
+	// helper function to get character file content
 	getCharacterFileContent := func(characterName string) (string, string, error) {
 		prefix := "characters/" + characterName + ".zip"
 		bucket := client.Bucket(bucketName)
 		obj := bucket.Object(prefix)
 
-		// Check if the object exists
+		// check if the object exists
 		attrs, err := obj.Attrs(ctx)
 		if err != nil {
 			if err == storage.ErrObjectNotExist {
@@ -67,43 +68,43 @@ func GetGameCharacters(w http.ResponseWriter, r *http.Request) {
 			return "", "", err
 		}
 
-		// Open the object for reading
+		// open the object for reading
 		reader, err := obj.NewReader(ctx)
 		if err != nil {
 			return "", "", err
 		}
 		defer reader.Close()
 
-		// Read the file content
+		// read the file content
 		fileContent, err := ioutil.ReadAll(reader)
 		if err != nil {
 			return "", "", err
 		}
 
-		// Encode the file content to base64
+		// encode the file content to base64
 		encodedContent := base64.StdEncoding.EncodeToString(fileContent)
 
 		return attrs.Name, encodedContent, nil
 	}
 
-	// Get Player One character file content
+	// Get player one character file content
 	playerOneFileName, playerOneBase64, err := getCharacterFileContent(playerOneCharacterName)
 	if err != nil {
 		if err == http.ErrMissingFile {
-			http.Error(w, "Player One character not found", http.StatusNotFound)
+			http.Error(w, "player one character not found", http.StatusNotFound)
 		} else {
-			http.Error(w, "Failed to get Player One character file content", http.StatusInternalServerError)
+			http.Error(w, "failed to get player one character file content", http.StatusInternalServerError)
 		}
 		return
 	}
 
-	// Get Player Two character file content
+	// Get player two character file content
 	playerTwoFileName, playerTwoBase64, err := getCharacterFileContent(playerTwoCharacterName)
 	if err != nil {
 		if err == http.ErrMissingFile {
-			http.Error(w, "Player Two character not found", http.StatusNotFound)
+			http.Error(w, "player two character not found", http.StatusNotFound)
 		} else {
-			http.Error(w, "Failed to get Player Two character file content", http.StatusInternalServerError)
+			http.Error(w, "failed to get player two character file content", http.StatusInternalServerError)
 		}
 		return
 	}

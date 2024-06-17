@@ -2861,8 +2861,8 @@ function i(r) {
           retryCount++;
 
           reconnectTimeout = setTimeout(() => {
-            window.mugenSocket = new WebSocket(yourWebSocketURL); // Reinitialize the WebSocket connection
-          }, 250); // Retry after 250ms
+            window.mugenSocket = new WebSocket(window.mugenSocketUrl);
+          }, 250);
         };
 
         window.mugenSocket.onopen = () => {

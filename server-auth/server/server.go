@@ -14,7 +14,7 @@ type Server struct {
 
 // NewServer creates a new instance of the HTTP server with configured routes and settings.
 func NewServer(addr string) *http.Server {
-	fmt.Println("Running on:", addr)
+	fmt.Println("running on: ", addr)
 
 	// Initialize the server struct
 	newServer := &Server{
