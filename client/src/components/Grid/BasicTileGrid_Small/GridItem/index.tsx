@@ -1,5 +1,6 @@
-import Link from "next/link";
 import React from "react";
+import Image from "next/image";
+import Link from "next/link";
 
 export type BasicGridItem = {
   backgroundImageHref?: string;
@@ -59,7 +60,7 @@ const GridItem = ({
           {userAvatarHref && (
             <div className="w-10 rounded-full overflow-hidden border border-white/30">
               <label htmlFor="avatarInput">
-                <img src={userAvatarHref} alt="pixel_owner_avatar" />
+                <Image src={userAvatarHref} alt="pixel_owner_avatar" />
               </label>
             </div>
           )}

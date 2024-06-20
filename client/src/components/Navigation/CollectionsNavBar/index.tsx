@@ -1,9 +1,10 @@
 "use client";
 
-import { usePathname } from "next/navigation";
 import React from "react";
-import NavItem from "./NavItem";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { placeholderAvatar } from "@/utility/placeholderAvatar";
+import NavItem from "./NavItem";
 import { linksCollection } from "../CollectionsDrawer/sample";
 
 const CollectionsNavBar = () => {
@@ -15,7 +16,7 @@ const CollectionsNavBar = () => {
         <div className="bg-gradient-to-br from-brand-primary to-brand-primary-dark w-full flex items-center justify-start px-4 pb-4 pt-1 -my-[1px] gap-6">
           <div className="w-12 rounded-full ring ring-primary overflow-hidden">
             <label htmlFor="avatarInput">
-              <img src={placeholderAvatar.href} alt="pixel_owner_avatar" />
+              <Image src={placeholderAvatar.href} alt="pixel_owner_avatar" />
             </label>
           </div>
 

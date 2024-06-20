@@ -22,6 +22,10 @@ export default async function RootLayout({
   if (!currentUser) {
     const { user, error } = await get_authenticatedUser(headers(), true);
 
+    if (error) {
+      console.error(error);
+    }
+
     if (user) {
       currentUser = user;
     }

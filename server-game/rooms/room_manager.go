@@ -88,7 +88,7 @@ func (rm *roomManager) GetRooms(w http.ResponseWriter, r *http.Request) {
 			playerTwoUserName = &room.PlayerTwoState.User
 		}
 		if onlyAvailable == "true" && room.PlayerOneState.User != "" && room.PlayerTwoState.User != "" {
-			return
+			continue
 		}
 
 		roomDetails := RoomOverviewDetails{
@@ -96,10 +96,25 @@ func (rm *roomManager) GetRooms(w http.ResponseWriter, r *http.Request) {
 			Id:      id,
 			Players: []*string{playerOneUserName, playerTwoUserName},
 		}
+
+		allNil := true
+
+		for _, player := range roomDetails.Players {
+			if player != nil {
+				allNil = false
+				break
+			}
+		}
+
+		if onlyAvailable == "true" && allNil {
+			continue
+		}
+
 		rooms = append(rooms, roomDetails)
 	}
 
 	w.Header().Set("Content-Type", "application/json")
+
 	if err := json.NewEncoder(w).Encode(rooms); err != nil {
 		http.Error(w, "failed to encode response", http.StatusInternalServerError)
 	}

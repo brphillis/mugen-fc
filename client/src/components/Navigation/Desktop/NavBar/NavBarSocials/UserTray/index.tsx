@@ -16,7 +16,12 @@ export const UserTray = ({ authServerUrl, user }: Props) => {
   const router = useRouter();
 
   const handleLogout = async () => {
-    const { success } = await get_client_logoutGoogle(authServerUrl);
+    const { success, error } = await get_client_logoutGoogle(authServerUrl);
+
+    if (error) {
+      console.error(error);
+    }
+
     if (success) {
       router.refresh();
     }

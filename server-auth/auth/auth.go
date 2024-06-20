@@ -56,7 +56,7 @@ func NewAuth(baseURL string) {
 		log.Println("could not find auth_url")
 	}
 
-	callbackURL := correctHostForLocalDocker(authURL) + "/auth/callback/google"
+	callbackURL := correctHostIfLocalDocker(authURL) + "/auth/callback/google"
 
 	Store = sessions.NewCookieStore([]byte(key))
 	Store.MaxAge(MaxAge)
@@ -93,12 +93,12 @@ func StartAuthFunction(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	provider := vars["provider"]
 
-	// Set the provider for gothic
+	// set the provider for gothic
 	gothic.GetProviderName = func(req *http.Request) (string, error) {
 		return provider, nil
 	}
 
-	// Begin the authentication process
+	// begin the authentication process
 	gothic.BeginAuthHandler(w, r)
 }
 
@@ -106,7 +106,7 @@ func GetAuthCallbackFunction(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	provider := vars["provider"]
 
-	// Set the provider for gothic
+	// set the provider for gothic
 	gothic.GetProviderName = func(req *http.Request) (string, error) {
 		return provider, nil
 	}
@@ -149,7 +149,7 @@ func GetAuthCallbackFunction(w http.ResponseWriter, r *http.Request) {
 		log.Println("could not find client_url")
 	}
 
-	http.Redirect(w, r, correctHostForLocalDocker(clientUrl), http.StatusSeeOther)
+	http.Redirect(w, r, correctHostIfLocalDocker(clientUrl), http.StatusSeeOther)
 }
 
 func GetAuthenticatedUserSession(w http.ResponseWriter, r *http.Request) {
@@ -197,7 +197,7 @@ func isNamedHost(host string) bool {
 	return true
 }
 
-func correctHostForLocalDocker(inputURL string) string {
+func correctHostIfLocalDocker(inputURL string) string {
 	appEnv := os.Getenv("APP_ENV")
 	if appEnv != "localcontainer" {
 		return inputURL

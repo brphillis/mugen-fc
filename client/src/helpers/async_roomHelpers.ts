@@ -124,7 +124,6 @@ export const post_JoinRoom = async (
     });
 
     if (!response.ok) {
-      console.log("Error Joining Room:", response.statusText);
       return { error: `error: ${response.statusText}` };
     }
 

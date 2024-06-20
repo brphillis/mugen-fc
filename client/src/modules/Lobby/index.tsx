@@ -11,9 +11,17 @@ type Props = {
   gameSocketURL: string;
   user: User;
   room: Room;
+  portraits: Base64Image[];
+  anims: Base64Image[];
 };
 
-export const Lobby = ({ gameSocketURL, user, room }: Props) => {
+export const Lobby = ({
+  gameSocketURL,
+  user,
+  room,
+  portraits,
+  anims,
+}: Props) => {
   const [playerOneState, setPlayerOneState] = useState<PlayerState>();
   const [playerTwoState, setPlayerTwoState] = useState<PlayerState>();
   const [playersReady, setPlayersReady] = useState<boolean>(false);
@@ -23,33 +31,6 @@ export const Lobby = ({ gameSocketURL, user, room }: Props) => {
   const webSocket = useRef<WebSocket | null>(null);
 
   const playerNumber = returnPlayerNumber(user, room);
-
-  const charMeta = [
-    {
-      name: "wildwolf",
-    },
-    {
-      name: "aner",
-    },
-    {
-      name: "balto",
-    },
-    {
-      name: "laurence",
-    },
-    {
-      name: "alou",
-    },
-    {
-      name: "bob",
-    },
-    {
-      name: "syota",
-    },
-    {
-      name: "iori",
-    },
-  ];
 
   const handleChangeCharacter = async (characterName: string) => {
     const gameData: GameMessage = {
@@ -165,26 +146,23 @@ export const Lobby = ({ gameSocketURL, user, room }: Props) => {
       <div className="relative flex flex-col bg-gradient-to-tr from-black to-brand-white/5 overflow-hidden w-[1340px] h-[705px] rounded-md mt-12 border border-white/50">
         <div className="w-full h-[75%] bg-white/5 rounded-md">
           <div className="flex flex-wrap h-max w-full justify-center mt-[15px]">
-            {charMeta.map((c) => {
+            {portraits.map(({ name, image }: Base64Image) => {
               return (
                 <div
-                  key={`characterportrait_` + c.name}
-                  className="relative border border-white/25 w-[56px] h-[56px]"
+                  key={`characterportrait_` + name}
+                  className="relative border border-white/25 h-[56px] w-[56px]"
                 >
                   <img
-                    onClick={() => handleChangeCharacter(c.name)}
-                    src={
-                      "https://storage.cloud.google.com/mugen-fc/characters/portrait/" +
-                      c.name +
-                      ".png"
-                    }
-                    className="w-full h-full object-cover cursor-pointer"
+                    onClick={() => handleChangeCharacter(name)}
+                    alt={"character_portrait_" + name}
+                    src={image}
+                    className="h-full w-full object-cover cursor-pointer"
                   />
                 </div>
               );
             })}
 
-            {Array(161 - charMeta.length)
+            {Array(161 - portraits.length)
               .fill(null)
               .map((_, index) => (
                 <div
@@ -230,19 +208,6 @@ export const Lobby = ({ gameSocketURL, user, room }: Props) => {
                   {countDown > 0 ? countDown : "Joining..."}
                 </div>
               )}
-
-              {/* <BasicButton
-                label={
-                  !playerOneState?.name || !playerTwoState?.name
-                    ? `Waiting...`
-                    : `Join Game`
-                }
-                disabled={!playerOneState?.name || !playerTwoState?.name}
-                onClick={() => {
-                  window.location.href = `/fight?id=${params.id}`;
-                }}
-                extendStyle="w-max !p-8 tracking-wide"
-              /> */}
             </div>
 
             <PlayerInfo
@@ -253,8 +218,16 @@ export const Lobby = ({ gameSocketURL, user, room }: Props) => {
             />
           </div>
         </div>
-        <SelectedCharacter playerNumber={1} playerState={playerOneState} />
-        <SelectedCharacter playerNumber={2} playerState={playerTwoState} />
+        <SelectedCharacter
+          playerNumber={1}
+          playerState={playerOneState}
+          anims={anims}
+        />
+        <SelectedCharacter
+          playerNumber={2}
+          playerState={playerTwoState}
+          anims={anims}
+        />
       </div>
     </div>
   );

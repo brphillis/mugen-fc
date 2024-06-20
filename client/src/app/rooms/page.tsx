@@ -13,6 +13,10 @@ export default async function Page() {
     error: authError,
   } = await get_authenticatedUser(headers());
 
+  if (authError) {
+    console.error(authError);
+  }
+
   if (redirectUrl) {
     return redirect(redirectUrl);
   }
@@ -20,6 +24,10 @@ export default async function Page() {
   const gameServerURL = process.env.GAMESERVER_URL;
 
   const { rooms, error: roomError } = await get_Rooms(gameServerURL!, true);
+
+  if (roomError) {
+    console.error(roomError);
+  }
 
   if (foundUser) {
     return (

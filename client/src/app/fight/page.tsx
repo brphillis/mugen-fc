@@ -13,6 +13,10 @@ export default async function Page({ searchParams }: Props) {
   const { id } = searchParams;
   const { user, error: authError } = await get_authenticatedUser(headers());
 
+  if (authError) {
+    console.error(authError);
+  }
+
   if (!user) {
     throw new Error("user not found");
   }
@@ -21,6 +25,10 @@ export default async function Page({ searchParams }: Props) {
     process.env.GAMESERVER_URL!,
     id
   );
+
+  if (roomError) {
+    console.error(roomError);
+  }
 
   if (!room) {
     throw new Error("room not found");

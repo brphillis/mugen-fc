@@ -29,6 +29,10 @@ export const RoomManager = ({ gameServerURL, initialRooms }: Props) => {
       userName
     );
 
+    if (error) {
+      console.error(error);
+    }
+
     if (roomId) {
       router.push(`/lobby/${roomId}`);
     }
@@ -40,6 +44,10 @@ export const RoomManager = ({ gameServerURL, initialRooms }: Props) => {
 
   const handleRefreshRooms = async () => {
     const { rooms, error } = await get_Rooms(gameServerURL, true);
+
+    if (error) {
+      console.error(error);
+    }
 
     if (rooms && rooms.length > 0) {
       setCurrentRooms(rooms);

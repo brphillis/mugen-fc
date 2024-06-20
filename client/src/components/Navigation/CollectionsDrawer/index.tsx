@@ -1,10 +1,10 @@
 "use client";
 
-import { placeholderAvatar } from "@/utility/placeholderAvatar";
-
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import React from "react";
+import Link from "next/link";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
+import { placeholderAvatar } from "@/utility/placeholderAvatar";
 import { linksCollection } from "./sample";
 
 const CollectionsDrawer = () => {
@@ -15,7 +15,7 @@ const CollectionsDrawer = () => {
       <div className="flex flex-col gap-3 items-center pt-6 pb-3">
         <div className="w-24 rounded-full ring ring-primary overflow-hidden">
           <label htmlFor="avatarInput">
-            <img src={placeholderAvatar.href} alt="pixel_owner_avatar" />
+            <Image src={placeholderAvatar.href} alt="pixel_owner_avatar" />
           </label>
         </div>
 

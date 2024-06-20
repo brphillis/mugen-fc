@@ -1,7 +1,10 @@
 package server
 
 import (
+	"strings"
+
 	"github.com/gorilla/mux"
+	"google.golang.org/api/iterator"
 
 	"context"
 	"encoding/base64"
@@ -19,10 +22,19 @@ type RoundPlayerFiles struct {
 	PlayerTwoBase64   string `json:"playerTwoBase64"`
 }
 
+type Base64Image struct {
+	Name  string `json:"name"`
+	Image string `json:"image"`
+}
+
 func (s *Server) RegisterRoutes() http.Handler {
 	r := mux.NewRouter()
 
 	r.HandleFunc("/api/characters", GetGameCharacters).Methods("GET")
+
+	r.HandleFunc("/api/characters/portraits", GetCharacterList).Methods("GET")
+
+	r.HandleFunc("/api/characters/anim", GetCharacterAnims).Methods("GET")
 
 	return r
 
@@ -118,4 +130,128 @@ func GetGameCharacters(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(file)
+}
+
+func GetCharacterList(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Background()
+	client, err := storage.NewClient(ctx)
+	if err != nil {
+		http.Error(w, "failed to create client", http.StatusInternalServerError)
+		return
+	}
+	defer client.Close()
+
+	bucketName := "mugen-fc"
+	prefix := "characters/portrait/"
+	bucket := client.Bucket(bucketName)
+
+	// Create a query to list objects with the given prefix
+	query := &storage.Query{Prefix: prefix}
+
+	it := bucket.Objects(ctx, query)
+	var characters []Base64Image
+	for {
+		objAttrs, err := it.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			http.Error(w, "failed to list character files", http.StatusInternalServerError)
+			return
+		}
+		// Check if the object is a .png file
+		if strings.HasSuffix(objAttrs.Name, ".png") {
+			// Read the content of the file
+			rc, err := bucket.Object(objAttrs.Name).NewReader(ctx)
+			if err != nil {
+				http.Error(w, "failed to read character file", http.StatusInternalServerError)
+				return
+			}
+			defer rc.Close()
+
+			imageData, err := ioutil.ReadAll(rc)
+			if err != nil {
+				http.Error(w, "failed to read character file", http.StatusInternalServerError)
+				return
+			}
+
+			// Encode the image content to Base64
+			encoded := base64.StdEncoding.EncodeToString(imageData)
+
+			// Append the file name without the prefix
+			fileName := strings.TrimPrefix(objAttrs.Name, prefix)
+			fileName = strings.TrimSuffix(fileName, ".png")
+
+			// Append to the characters slice with the appropriate prefix for Base64 images
+			characters = append(characters, Base64Image{
+				Name:  fileName,
+				Image: "data:image/png;base64," + encoded,
+			})
+		}
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(characters)
+}
+
+func GetCharacterAnims(w http.ResponseWriter, r *http.Request) {
+	ctx := context.Background()
+	client, err := storage.NewClient(ctx)
+	if err != nil {
+		http.Error(w, "failed to create client", http.StatusInternalServerError)
+		return
+	}
+	defer client.Close()
+
+	bucketName := "mugen-fc"
+	prefix := "characters/anim/"
+	bucket := client.Bucket(bucketName)
+
+	// Create a query to list objects with the given prefix
+	query := &storage.Query{Prefix: prefix}
+
+	it := bucket.Objects(ctx, query)
+	var characters []Base64Image
+	for {
+		objAttrs, err := it.Next()
+		if err == iterator.Done {
+			break
+		}
+		if err != nil {
+			http.Error(w, "failed to list character files", http.StatusInternalServerError)
+			return
+		}
+		// Check if the object is a .gif file
+		if strings.HasSuffix(objAttrs.Name, ".gif") {
+			// Read the content of the file
+			rc, err := bucket.Object(objAttrs.Name).NewReader(ctx)
+			if err != nil {
+				http.Error(w, "failed to read character file", http.StatusInternalServerError)
+				return
+			}
+			defer rc.Close()
+
+			imageData, err := ioutil.ReadAll(rc)
+			if err != nil {
+				http.Error(w, "failed to read character file", http.StatusInternalServerError)
+				return
+			}
+
+			// Encode the image content to Base64
+			encoded := base64.StdEncoding.EncodeToString(imageData)
+
+			// Append the file name without the prefix
+			fileName := strings.TrimPrefix(objAttrs.Name, prefix)
+			fileName = strings.TrimSuffix(fileName, ".gif")
+
+			// Append to the characters slice with the appropriate prefix for Base64 images
+			characters = append(characters, Base64Image{
+				Name:  fileName,
+				Image: "data:image/gif;base64," + encoded,
+			})
+		}
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(characters)
 }

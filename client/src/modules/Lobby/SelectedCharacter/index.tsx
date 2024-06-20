@@ -1,12 +1,25 @@
+"use client";
+
+import React, { useEffect, useState } from "react";
 import { capitalizeFirst } from "@/helpers/stringHelpers";
-import React from "react";
 
 type Props = {
   playerState?: PlayerState;
   playerNumber: number;
+  anims: Base64Image[];
 };
 
-const SelectedCharacter = ({ playerState, playerNumber }: Props) => {
+const SelectedCharacter = ({ playerState, playerNumber, anims }: Props) => {
+  const [currentAnim, setCurrentAnim] = useState<Base64Image>();
+
+  useEffect(() => {
+    const animToSet = anims?.find((image) => image.name == playerState?.name);
+
+    if (animToSet) {
+      setCurrentAnim(animToSet);
+    }
+  }, [playerState?.name]);
+
   return (
     <div
       className={`select-none flex items-center justify-center w-[240px] h-[280px] border !border-b-0 border-white/50 bg-gradient-to-tr from-black to-brand-black absolute bottom-0 
@@ -15,12 +28,9 @@ const SelectedCharacter = ({ playerState, playerNumber }: Props) => {
     >
       {playerState?.name ? (
         <img
-          key={`selectedcharacterportrait_` + playerState?.name}
-          src={
-            "https://storage.cloud.google.com/mugen-fc/characters/anim/" +
-            playerState?.name +
-            ".gif"
-          }
+          key={"selected_character_" + playerState?.name + "_" + playerNumber}
+          alt={"selected_character_" + playerState?.name + "_" + playerNumber}
+          src={currentAnim?.image}
           className={`w-auto h-full p-3 ${
             playerNumber === 2 ? "-scale-x-100" : ""
           }`}

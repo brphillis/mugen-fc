@@ -1,10 +1,11 @@
+import { useState } from "react";
+import Image from "next/image";
+import { placeholderAvatar } from "@/utility/placeholderAvatar";
 import {
   blobToFile,
   convertToBase64Image,
   resizeImage,
 } from "@/helpers/fileHelpers";
-import { placeholderAvatar } from "@/utility/placeholderAvatar";
-import { useState } from "react";
 
 type Props = {
   avatar?: any | null;
@@ -20,7 +21,7 @@ const UploadAvatar = ({ avatar, onChange }: Props) => {
         <div className="avatar !cursor-pointer">
           <div className="w-32 rounded-full ring ring-primary mt-3">
             <label htmlFor="avatarInput">
-              <img src={image || placeholderAvatar?.href} alt="user_avatar" />
+              <Image src={image || placeholderAvatar?.href} alt="user_avatar" />
             </label>
           </div>
         </div>

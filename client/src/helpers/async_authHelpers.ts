@@ -6,10 +6,7 @@ export const get_client_logoutGoogle = async (
   success?: string;
   error?: string;
 }> => {
-  console.log("clicked");
-
   if (!authUrl) {
-    console.log("return err");
     return { error: "no auth server url" };
   }
 
@@ -22,23 +19,18 @@ export const get_client_logoutGoogle = async (
 
     const url = authUrl + "/logout";
 
-    console.log("fetching at", url);
-
     const response = await fetch(url, options);
 
     if (!response.ok) {
-      console.log("err", `${response.statusText}`);
       return { error: `error logging out: ${response.statusText}` };
     }
 
     const success = await response.json();
 
-    console.log("res", success);
-
     return { success };
   } catch (error) {
     return {
-      error: `(catch) get_logoutgoogle error: ${(error as Error).message}`,
+      error: `(catch) error: ${(error as Error).message}`,
     };
   }
 };
@@ -71,17 +63,12 @@ export const get_authenticatedUser = async (
     const response = await fetch(`${authServerUrl}/auth`, options);
 
     if (response.ok) {
-      console.log("get_authenticatedUser response: ok");
-
       const user = await response.json();
 
       return { user };
     } else if (preventRedirect) {
-      console.log("get_authenticatedUser preventRedirect triggered");
       return { user: undefined };
     } else {
-      console.log("get_authenticatedUser response NOT ok, starting new auth");
-
       const newAuthResponse = await fetch(
         `${authServerUrl}/auth/google`,
         options
@@ -90,8 +77,6 @@ export const get_authenticatedUser = async (
       if (!newAuthResponse.ok) {
         return { error: `error: ${newAuthResponse.statusText}` };
       }
-
-      console.log("newauth response: ", newAuthResponse);
 
       return { redirectUrl: newAuthResponse.url };
     }
