@@ -1,15 +1,16 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { ReadyButton } from "./components/ReadyButton";
-import { Overlay } from "./components/Overlay";
-import { WaitingText } from "./components/WaitingText";
-import { PlayerInformation } from "./components/PlayerInformation";
-import { TimerContainer } from "./components/TimerContainer";
 import { parseQueryString } from "@/helpers/queryHelpers";
 import { returnPlayerNumber } from "@/helpers/gameHelpers";
+import { ScreenSizeEnforcer } from "@/components/Game/ScreenSizeEnforcer";
+import { Overlay } from "./components/Overlay";
+import { ReadyButton } from "./components/ReadyButton";
+import { WaitingText } from "./components/WaitingText";
 import { WinnerDisplay } from "./components/WinnerDisplay";
+import { TimerContainer } from "./components/TimerContainer";
 import { GameStartDisplay } from "./components/GameStartDisplay";
+import { PlayerInformation } from "./components/PlayerInformation";
 
 type Props = {
   gameSocketURL: string;
@@ -75,56 +76,57 @@ export const Game = ({
   }, [playerOneState?.ready, playerTwoState?.ready]);
 
   return (
-    <div className="w-full flex flex-col justify-center">
-      <div className="relative" id="game">
-        <div className="absolute flex justify-between top-6 left-1/2 translate-x-[-50%] w-full px-12 select-none">
-          <PlayerInformation
-            playerState={playerOneState}
-            playerNumber={1}
-            gameState={gameState}
-          />
+    <>
+      <div className="w-full flex flex-col justify-center">
+        <div className="relative" id="game">
+          <div className="absolute flex justify-between top-6 left-1/2 translate-x-[-50%] w-full px-12 select-none">
+            <PlayerInformation
+              playerState={playerOneState}
+              playerNumber={1}
+              gameState={gameState}
+            />
 
-          <TimerContainer gameState={gameState} />
+            <TimerContainer gameState={gameState} />
 
-          <PlayerInformation
-            playerState={playerTwoState}
-            playerNumber={2}
-            gameState={gameState}
-          />
+            <PlayerInformation
+              playerState={playerTwoState}
+              playerNumber={2}
+              gameState={gameState}
+            />
+          </div>
+
+          <canvas
+            id="gamecanvas"
+            width="1024"
+            height="540"
+            className="rounded-md shadow-lg"
+          ></canvas>
+
+          {isReady && (!playerOneState?.ready || !playerTwoState?.ready) && (
+            <WaitingText />
+          )}
+
+          {!isReady && !gameState?.initiated && <ReadyButton />}
+
+          {!gameLoading && (
+            <GameStartDisplay
+              gameState={gameState}
+              playerOneState={playerOneState}
+              playerTwoState={playerTwoState}
+            />
+          )}
+
+          {!gameState?.initiated && <WinnerDisplay gameState={gameState} />}
+
+          {gameLoading && <Overlay text="Loading..." />}
+
+          {gameState?.gameOver && <Overlay text="Game Over" />}
+
+          {gameState?.disconnected && <Overlay text="Disconnected" />}
         </div>
 
-        <canvas
-          id="gamecanvas"
-          width="1024"
-          height="540"
-          className="rounded-md shadow-lg"
-        ></canvas>
-
-        {isReady && (!playerOneState?.ready || !playerTwoState?.ready) && (
-          <WaitingText />
-        )}
-
-        {!isReady && !gameState?.initiated && <ReadyButton />}
-
-        {!gameLoading && (
-          <GameStartDisplay
-            gameState={gameState}
-            playerOneState={playerOneState}
-            playerTwoState={playerTwoState}
-          />
-        )}
-
-        {!gameState?.initiated && <WinnerDisplay gameState={gameState} />}
-
-        {gameLoading && <Overlay text="Loading..." />}
-
-        {gameState?.gameOver && <Overlay text="Game Over" />}
-
-        {gameState?.disconnected && <Overlay text="Disconnected" />}
-      </div>
-
-      {/* TEMP CONTROLS */}
-      {/* <div className="hidden justify-center w-full">
+        {/* TEMP CONTROLS */}
+        {/* <div className="hidden justify-center w-full">
         🔊
         <input
           id="basevol"
@@ -137,6 +139,8 @@ export const Game = ({
           readOnly
         />
       </div> */}
-    </div>
+      </div>
+      <ScreenSizeEnforcer />
+    </>
   );
 };

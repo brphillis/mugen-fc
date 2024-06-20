@@ -3,9 +3,10 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { returnPlayerNumber } from "@/helpers/gameHelpers";
-import SelectedCharacter from "./SelectedCharacter";
-import PlayerInfo from "./PlayerInfo";
+import { ScreenSizeEnforcer } from "@/components/Game/ScreenSizeEnforcer";
 import { InfiniteScrollText } from "@/components/Effect/InfiniteScrollText";
+import PlayerInfo from "./PlayerInfo";
+import SelectedCharacter from "./SelectedCharacter";
 
 type Props = {
   gameSocketURL: string;
@@ -52,10 +53,12 @@ export const Lobby = ({
     }
   };
 
+  // maintains connection and updates playerstate
   useEffect(() => {
     const url = `${gameSocketURL}/ws/room/${params.id}`;
-    let retries = 0;
     const maxRetries = 6;
+
+    let retries = 0;
     let reconnectTimeout: NodeJS.Timeout;
     let isMounted = true;
 
@@ -117,6 +120,7 @@ export const Lobby = ({
     };
   }, []);
 
+  // handles game start when players are ready
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
     // both players ready - initiate countdown then navigate to fight
@@ -142,93 +146,96 @@ export const Lobby = ({
   }, [playerOneState?.ready && playerTwoState?.ready]);
 
   return (
-    <div className="flex flex-col items-center">
-      <div className="relative flex flex-col bg-gradient-to-tr from-black to-brand-white/5 overflow-hidden w-[1340px] h-[705px] rounded-md mt-12 border border-white/50">
-        <div className="w-full h-[75%] bg-white/5 rounded-md">
-          <div className="flex flex-wrap h-max w-full justify-center mt-[15px]">
-            {portraits.map(({ name, image }: Base64Image) => {
-              return (
-                <div
-                  key={`characterportrait_` + name}
-                  className="relative border border-white/25 h-[56px] w-[56px]"
-                >
-                  <img
-                    onClick={() => handleChangeCharacter(name)}
-                    alt={"character_portrait_" + name}
-                    src={image}
-                    className="h-full w-full object-cover cursor-pointer"
-                  />
-                </div>
-              );
-            })}
+    <>
+      <div className="flex flex-col items-center">
+        <div className="relative flex flex-col bg-gradient-to-tr from-black to-brand-white/5 overflow-hidden w-[1340px] h-[705px] rounded-md mt-12 border border-white/50">
+          <div className="w-full h-[75%] bg-white/5 rounded-md">
+            <div className="flex flex-wrap h-max w-full justify-center mt-[15px]">
+              {portraits.map(({ name, image }: Base64Image) => {
+                return (
+                  <div
+                    key={`characterportrait_` + name}
+                    className="relative border border-white/25 h-[56px] w-[56px]"
+                  >
+                    <img
+                      onClick={() => handleChangeCharacter(name)}
+                      alt={"character_portrait_" + name}
+                      src={image}
+                      className="h-full w-full object-cover cursor-pointer"
+                    />
+                  </div>
+                );
+              })}
 
-            {Array(161 - portraits.length)
-              .fill(null)
-              .map((_, index) => (
-                <div
-                  key={"placeholdercharacter_" + index}
-                  className="relative select-none border border-white/25 w-[56px] h-[56px] font-press_start_2p flex items-center justify-center"
-                >
-                  <span className="opacity-10">?</span>
-                </div>
-              ))}
+              {Array(161 - portraits.length)
+                .fill(null)
+                .map((_, index) => (
+                  <div
+                    key={"placeholdercharacter_" + index}
+                    className="relative select-none border border-white/25 w-[56px] h-[56px] font-press_start_2p flex items-center justify-center"
+                  >
+                    <span className="opacity-10">?</span>
+                  </div>
+                ))}
+            </div>
           </div>
-        </div>
-        <div className="relative w-full h-[49.5%] flex justify-center">
-          <div className="absolute top-0 bg-black/25 w-full h-[40px]">
-            <InfiniteScrollText
-              text={
-                playerOneState?.name && playerTwoState?.name
-                  ? `READY TO FIGHT`
-                  : `SELECT CHARACTER`
-              }
-              extendStyle="text-brand-white/20 font-press_start_2p text-xs"
-            />
-          </div>
-
-          <div className="relative w-[862px] flex justify-center items-center h-full">
-            <PlayerInfo
-              user={user}
-              webSocket={webSocket}
-              playerNumber={1}
-              playerState={playerOneState}
-            />
-
-            <div className="flex flex-col items-center w-full bg-white-10 gap-3 -mt-6">
-              {!playersReady && (
-                <div className="opacity-10 select-none text-5xl">VS</div>
-              )}
-
-              {playerOneState?.ready && playerTwoState?.ready && (
-                <div
-                  className={`select-none font-press_start_2p ${
-                    countDown > 0 ? "text-6xl" : "text-lg mt-3"
-                  }`}
-                >
-                  {countDown > 0 ? countDown : "Joining..."}
-                </div>
-              )}
+          <div className="relative w-full h-[49.5%] flex justify-center">
+            <div className="absolute top-0 bg-black/25 w-full h-[40px]">
+              <InfiniteScrollText
+                text={
+                  playerOneState?.name && playerTwoState?.name
+                    ? `READY TO FIGHT`
+                    : `SELECT CHARACTER`
+                }
+                extendStyle="text-brand-white/20 font-press_start_2p text-xs"
+              />
             </div>
 
-            <PlayerInfo
-              user={user}
-              webSocket={webSocket}
-              playerNumber={2}
-              playerState={playerTwoState}
-            />
+            <div className="relative w-[862px] flex justify-center items-center h-full">
+              <PlayerInfo
+                user={user}
+                webSocket={webSocket}
+                playerNumber={1}
+                playerState={playerOneState}
+              />
+
+              <div className="flex flex-col items-center w-full bg-white-10 gap-3 -mt-6">
+                {!playersReady && (
+                  <div className="opacity-10 select-none text-5xl">VS</div>
+                )}
+
+                {playerOneState?.ready && playerTwoState?.ready && (
+                  <div
+                    className={`select-none font-press_start_2p ${
+                      countDown > 0 ? "text-6xl" : "text-lg mt-3"
+                    }`}
+                  >
+                    {countDown > 0 ? countDown : "Joining..."}
+                  </div>
+                )}
+              </div>
+
+              <PlayerInfo
+                user={user}
+                webSocket={webSocket}
+                playerNumber={2}
+                playerState={playerTwoState}
+              />
+            </div>
           </div>
+          <SelectedCharacter
+            playerNumber={1}
+            playerState={playerOneState}
+            anims={anims}
+          />
+          <SelectedCharacter
+            playerNumber={2}
+            playerState={playerTwoState}
+            anims={anims}
+          />
         </div>
-        <SelectedCharacter
-          playerNumber={1}
-          playerState={playerOneState}
-          anims={anims}
-        />
-        <SelectedCharacter
-          playerNumber={2}
-          playerState={playerTwoState}
-          anims={anims}
-        />
       </div>
-    </div>
+      <ScreenSizeEnforcer />
+    </>
   );
 };

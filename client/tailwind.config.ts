@@ -11,6 +11,7 @@ const config: Config = {
     "./src/context/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/utility/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/wrappers/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/hooks/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   darkMode: "class",
   theme: {
