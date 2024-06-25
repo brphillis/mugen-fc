@@ -2676,7 +2676,12 @@ function i(r) {
 
           if (!positionOnly) {
             characterStateData.stateNumber = characterState.state.number;
-            characterStateData.actionNumber = characterState.action.number;
+            if (
+              characterStateData?.action?.totalTicks &&
+              characterStateData.animTick < characterStateData.action.totalTicks
+            ) {
+              characterStateData.actionNumber = characterState.action.number;
+            }
           }
 
           const playerData = {

@@ -9,7 +9,7 @@ const NavBarLinks = () => {
   const pathname = usePathname();
 
   return (
-    <div className="flex w-full justify-center max-lg:hidden">
+    <div className="relative flex w-full justify-start max-lg:hidden">
       {linksCollection?.map(({ label, href }: NavigationLink) => {
         const onPath = pathname === href;
 

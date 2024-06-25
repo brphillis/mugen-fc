@@ -7,7 +7,7 @@ import { AuthContext } from "@/context/AuthContext";
 import BasicButton from "@/components/Buttons/BasicButton";
 import BasicInput from "@/components/Forms/Input/BasicInput";
 import { get_Rooms, post_CreateRoom } from "@/helpers/async_roomHelpers";
-import { ScreenSizeEnforcer } from "@/components/Game/ScreenSizeEnforcer";
+import { ScreenSizeEnforcer } from "@/components/Overlays/ScreenSizeEnforcer";
 
 type Props = {
   gameServerURL: string;

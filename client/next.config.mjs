@@ -9,6 +9,12 @@ const nextConfig = {
         port: "",
         pathname: "/mugen-fc/**",
       },
+      {
+        protocol: "https",
+        hostname: "particles.js.org",
+        port: "",
+        pathname: "/images/**",
+      },
     ],
   },
 };

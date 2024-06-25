@@ -3,11 +3,13 @@
 import React from "react";
 
 type Props = {
-  icon: string;
+  icon: IconType;
   extendStyle?: string;
   size?: number;
   onClick?: () => void;
 };
+
+type IconType = "person" | "check" | "cross" | "joystick" | "refresh";
 
 export const Icon = ({ size, extendStyle, icon, onClick }: Props) => {
   let currentIcon;
@@ -30,6 +32,13 @@ export const Icon = ({ size, extendStyle, icon, onClick }: Props) => {
     case "cross": {
       currentIcon = (
         <path d="M7.004 23.087l7.08-7.081-7.07-7.071L8.929 7.02l7.067 7.069L23.084 7l1.912 1.913-7.089 7.093 7.075 7.077-1.912 1.913-7.074-7.073L8.917 25z" />
+      );
+      break;
+    }
+
+    case "joystick": {
+      currentIcon = (
+        <path d="M4 3.5C4 1.567 5.567 0 7.5 0C9.433 0 11 1.567 11 3.5C11 5.26324 9.69615 6.72194 8 6.96456V10H13.5C13.7761 10 14 10.2239 14 10.5V14.5C14 14.7761 13.7761 15 13.5 15H1.5C1.22386 15 1 14.7761 1 14.5V10.5C1 10.2239 1.22386 10 1.5 10H7V6.96456C5.30385 6.72194 4 5.26324 4 3.5Z" />
       );
       break;
     }

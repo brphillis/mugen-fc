@@ -14,7 +14,7 @@ export const GoogleLoginButton = () => {
   return (
     <div
       onClick={handleLogin}
-      className="flex items-center gap-3 cursor-pointer hover:text-white"
+      className="flex items-center gap-3 cursor-pointer hover:text-white pr-6"
     >
       <Icon icon="person" extendStyle="fill-brand-white" />
       <span>Login</span>

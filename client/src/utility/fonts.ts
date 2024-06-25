@@ -4,6 +4,8 @@ import {
   Electrolize,
   Londrina_Solid,
   Press_Start_2P,
+  Protest_Revolution,
+  Saira_Stencil_One,
   Silkscreen,
 } from "next/font/google";
 
@@ -49,4 +51,18 @@ const electrolize = Electrolize({
   variable: "--font-electrolize",
 });
 
-export const fontVariables = `${londrina_Solid_init.variable}  ${press_start_2p_init.variable} ${archivo_black_init.variable} ${acme_init.variable} ${silkscreen_init.variable} ${electrolize.variable}`;
+const protest_revolution = Protest_Revolution({
+  subsets: ["latin", "latin-ext", "math", "symbols", "vietnamese"],
+  weight: ["400"],
+  style: "normal",
+  variable: "--font-protest_revolution",
+});
+
+const saira_stencil_one = Saira_Stencil_One({
+  subsets: ["latin", "latin-ext", "vietnamese"],
+  weight: ["400"],
+  style: "normal",
+  variable: "--font-saira_stencil_one",
+});
+
+export const fontVariables = `${londrina_Solid_init.variable}  ${press_start_2p_init.variable} ${archivo_black_init.variable} ${acme_init.variable} ${silkscreen_init.variable} ${electrolize.variable} ${protest_revolution.variable} ${saira_stencil_one.variable}`;

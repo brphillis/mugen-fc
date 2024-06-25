@@ -55,6 +55,8 @@ const config: Config = {
         press_start_2p: ["var(--font-press_start_2p)"],
         londrina_solid: ["var(--font-londrina_solid)"],
         electrolize: ["var(--font-electrolize)"],
+        protest_revolution: ["var(--font-protest_revolution)"],
+        saira_stencil_one: ["var(--font-saira_stencil_one)"],
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
@@ -119,7 +121,7 @@ const config: Config = {
   plugins: [
     require("daisyui"),
     require("tailwindcss-animated"),
-    require("tailwindcss-bg-patterns"),
+    require("tailwindcss-patterns"),
     addVariablesForColors,
   ],
 };

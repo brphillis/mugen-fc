@@ -13,7 +13,7 @@ const NavBarSocials = ({ user }: Props) => {
   return (
     <>
       {authServerUrl ? (
-        <div className="flex flex-row justify-end items-center gap-6 w-[320px] max-md:hidden pr-3">
+        <div className="relative w-full flex flex-row justify-end items-center gap-6 max-lg:hidden">
           {!user ? (
             <GoogleLoginButton />
           ) : (

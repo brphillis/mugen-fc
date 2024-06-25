@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { parseQueryString } from "@/helpers/queryHelpers";
 import { returnPlayerNumber } from "@/helpers/gameHelpers";
-import { ScreenSizeEnforcer } from "@/components/Game/ScreenSizeEnforcer";
+import { ScreenSizeEnforcer } from "@/components/Overlays/ScreenSizeEnforcer";
 import { Overlay } from "./components/Overlay";
 import { ReadyButton } from "./components/ReadyButton";
 import { WaitingText } from "./components/WaitingText";

@@ -1,7 +1,8 @@
-import Link from "next/link";
 import React from "react";
+import Link from "next/link";
 import NavBarLinks from "./NavBarLinks";
 import NavBarSocials from "./NavBarSocials";
+import MetalNavBar from "./_Styles/MetalNavBar";
 
 type Props = {
   user?: User;
@@ -9,8 +10,8 @@ type Props = {
 
 const Navbar = ({ user }: Props) => {
   return (
-    <div className="relative w-[100vw] navbar bg-gradient-to-tr from-black to-brand-white/5 border-b-[1px] border-b-brand-primary/50">
-      <div className="flex-none lg:hidden">
+    <MetalNavBar>
+      <div className="relative flex-none lg:hidden">
         <label
           htmlFor="my-drawer-3"
           aria-label="open sidebar"
@@ -32,19 +33,19 @@ const Navbar = ({ user }: Props) => {
         </label>
       </div>
 
-      <div className="flex flex-row items-center justify-center w-full pl-6 pr-3">
+      <NavBarLinks />
+
+      <div className="relative w-full flex items-center justify-center max-lg:pr-[48px]">
         <Link
           href="/"
-          className="w-[260px] max-lg:w-full text-2xl text-brand-white"
+          className="text-[30px] font-saira_stencil_one text-center hover:text-white transition-colors duration-300"
         >
           MFC
         </Link>
-
-        <NavBarLinks />
-
-        <NavBarSocials user={user} />
       </div>
-    </div>
+
+      <NavBarSocials user={user} />
+    </MetalNavBar>
   );
 };
 

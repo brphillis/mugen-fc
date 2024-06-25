@@ -3,7 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { returnPlayerNumber } from "@/helpers/gameHelpers";
-import { ScreenSizeEnforcer } from "@/components/Game/ScreenSizeEnforcer";
+import { ScreenSizeEnforcer } from "@/components/Overlays/ScreenSizeEnforcer";
 import { InfiniteScrollText } from "@/components/Effect/InfiniteScrollText";
 import PlayerInfo from "./PlayerInfo";
 import SelectedCharacter from "./SelectedCharacter";
