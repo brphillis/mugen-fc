@@ -81,11 +81,11 @@ func newRoom(roomID string, rm *roomManager, roomCreateData RoomCreateData) *roo
 		stopRoom:    make(chan struct{}),
 	}
 
-	r.PlayerOneState.Life = 1000
+	r.PlayerOneState.Life = 500
 	r.PlayerOneState.Ready = false
 	r.PlayerOneState.InGame = false
 
-	r.PlayerTwoState.Life = 1000
+	r.PlayerTwoState.Life = 500
 	r.PlayerTwoState.Ready = false
 	r.PlayerTwoState.InGame = false
 
@@ -253,8 +253,8 @@ func (r *room) initiateRound() {
 	r.gameState.Round = r.gameState.Round + 1
 	r.gameState.Initiated = true
 	r.gameState.Time = 120
-	r.PlayerOneState.Life = 1000
-	r.PlayerTwoState.Life = 1000
+	r.PlayerOneState.Life = 500
+	r.PlayerTwoState.Life = 500
 
 	go r.startRoundTimer()
 
