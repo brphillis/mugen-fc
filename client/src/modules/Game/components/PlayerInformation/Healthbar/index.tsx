@@ -33,7 +33,9 @@ const Healthbar = ({ playerState, playerNumber }: Props) => {
     >
       <div
         style={{
-          width: playerState?.life ? playerState?.life / 10 + "%" : 0 + "%",
+          width: playerState?.life
+            ? (playerState?.life / 500) * 100 + "%"
+            : "0%",
           display:
             !playerState?.life || (playerState?.life && playerState?.life <= 0)
               ? "none"
