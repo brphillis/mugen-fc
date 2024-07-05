@@ -10,8 +10,8 @@ const Healthbar = ({ playerState, playerNumber }: Props) => {
   let healthColor = "bg-green-600";
 
   const playerHealthPercentage = playerState?.life
-    ? playerState?.life / 10 + "%"
-    : 0 + "%";
+    ? (playerState?.life / 500) * 100 + "%"
+    : "0%";
 
   const playerHealthPercentageNumber = convertPercentageToNumber(
     playerHealthPercentage
